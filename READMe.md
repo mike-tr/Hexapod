@@ -11,16 +11,24 @@ A custom-designed 6-legged robot built from scratch, featuring 3D-printed parts,
 - [x] CAD design (legs, chassis, battery holder)
 - [x] STL exports
 - [x] 3 legs assembled
-- [ ] Full 6-leg assembly
+- [x] Full 6-leg assembly
 - [ ] PCB + Raspberry Pi integration
 - [ ] ROS2 firmware & gait control
 
 ## Assembly Preview
 
 <p float="left">
-  <img src="media/WhatsApp Image 2026-05-30 at 14.24.14.jpeg" width="32%" />
-  <img src="media/WhatsApp Image 2026-05-30 at 14.24.15.jpeg" width="32%" />
+  <img src="media/2legs+1leg_assembled.jpeg" width="32%" />
+  <img src="media/printed_leg.jpeg" width="32%" />
 </p>
+
+### Half-Assembled Demo
+
+PCB and Pi aren't physically mounted/connected yet, but the legs are already moving:
+
+![Hexapod half-assembled demo](media/hexapod.gif)
+
+3-leg and 2-leg standing tests both hold, though on 3 legs the body sags a bit — not sure yet if it's the joints flexing or the legs slowly sliding.
 
 ## Hardware
 
