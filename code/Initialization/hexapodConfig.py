@@ -1,4 +1,5 @@
 from leg import HexLeg
+from servo import Servo
 
 class HexapodConfig:
     """Servo channel mapping and physical parameters for this hexapod."""

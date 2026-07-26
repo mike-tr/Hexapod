@@ -1,21 +1,13 @@
 from Initialization.servo import Servo
 from Initialization.pca9685 import PCA9685
 from Initialization.adc import ADC
+from Initialization.hexapodConfig import HexapodConfig
 import time
 
 # print("Testing remote pi")
 
 servo = Servo()
 
-
-legs = [
-    [15, 14, 13],
-    [12, 11, 10],
-    [9, 8, 31],
-    [16, 17, 18],
-    [19,20,21],
-    [22,23,27]
-]
 
 
 def anim(foot, center, rotation):
