@@ -1,11 +1,12 @@
 from Initialization.servo import Servo
 from Initialization.pca9685 import PCA9685
 from Initialization.adc import ADC
+from Initialization.hexapodConfig import HexapodConfig
 import time
 
 # print("Testing remote pi")
 
-servo = Servo()
+# servo = Servo()
 
 # # Main program logic follows:
 # if __name__ == '__main__':
@@ -28,15 +29,15 @@ servo = Servo()
 #             servo.relax()
 #             break
 
-def test_Adc():
-    adc = ADC()
-    try:
-        while True:
-            Power=adc.read_battery_voltage()
-            print ("The battery voltage is "+str(Power)+'\n')
-            time.sleep(1)
-    except KeyboardInterrupt:
-        print ("\nEnd of program")
+# def test_Adc():
+#     adc = ADC()
+#     try:
+#         while True:
+#             Power=adc.read_battery_voltage()
+#             print ("The battery voltage is "+str(Power)+'\n')
+#             time.sleep(1)
+#     except KeyboardInterrupt:
+#         print ("\nEnd of program")
 
 # for i in range(10):
 #     servo.set_angle(15,180)
@@ -87,4 +88,23 @@ def test_Adc():
 #         servo.relax(id)
 #         break
 
-test_Adc()
+# test_Adc()
+
+robot = HexapodConfig()
+
+# robot.legR[0].set_angles(90, 90, 90)
+
+id = 1
+
+
+robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(0.95, 0.3, 0))
+time.sleep(1)
+robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(0.7, 0.3, -0.35))
+time.sleep(1)
+robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(0.7, 0.0, -0.35))
+time.sleep(1)
+robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(0.5, 0.4, 0.15))
+time.sleep(1)
+robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(0.5, -0.3, -0.55))
+time.sleep(1)
+robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(0.5, 0.0, -0.25))
