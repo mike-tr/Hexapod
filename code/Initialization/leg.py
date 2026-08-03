@@ -36,9 +36,9 @@ class HexLeg:
         pass
 
     def set_angles(self, coxa_angle, femur_angle, tibia_angle):
-        self.coxa_servo.set_angle(coxa_angle)
-        self.femur_servo.set_angle(femur_angle)
-        self.tibia_servo.set_angle(tibia_angle)
+        self.coxa.set_angle(coxa_angle)
+        self.femur.set_angle(femur_angle)
+        self.tibia.set_angle(tibia_angle)
 
     def set_angles_from_list(self, angles: list[float]) -> None:
         """Set all three joint angles from a list [coxa, femur, tibia]."""

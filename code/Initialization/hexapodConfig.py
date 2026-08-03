@@ -17,6 +17,12 @@ class HexapodConfig:
         self.legL : list[HexLeg] = [HexLeg(self.controller,13,14,15), HexLeg(self.controller,10,11,12), HexLeg(self.controller,31,8,9)]
 
 
-    def moveLegAngle(self, right: bool, id: int, coxa_angle, femur_angle, tibia_angle):
-        if right:
-            self.legR[id].se
+    def relax(self):
+        for leg in self.legR:
+            leg.relax()
+        for leg in self.legL:
+            leg.relax()
+
+    # def moveLegAngle(self, right: bool, id: int, coxa_angle, femur_angle, tibia_angle):
+    #     if right:
+    #         self.legR[id].se

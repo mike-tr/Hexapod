@@ -45,7 +45,7 @@ class Servo:
     def __init__(self, controller : ServoController, servo_id):
         self.current_angle = None
         self.servo_id = servo_id
-        self._chip, self._channel= controller._resolve_channel(servo_id)
+        self._chip, self._channel= controller.get_chip_for_channel(servo_id)
             
     def set_angle(self, angle) -> None:
         duty = _angle_to_duty(angle)

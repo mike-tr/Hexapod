@@ -13,19 +13,26 @@ foot = 125
 center = 70
 rotation = 90
 
-robot.legR[0].set_angles(90, 90, 90)
+id = 0
+
+robot.legL[id].set_angles(90, 90, 90)
 time.sleep(3)
-robot.legR[0].set_angles(90, 90, 170)
+robot.legL[id].set_angles(90, 90, 170)
 time.sleep(3)
-robot.legR[0].set_angles(90, 90, 15)
+robot.legL[id].set_angles(90, 90, 15)
 time.sleep(3)
-robot.legR[0].set_angles(90, 170, 90)
+robot.legL[id].set_angles(90, 170, 90)
 time.sleep(3)
-robot.legR[0].set_angles(90, 15, 90)
+robot.legL[id].set_angles(90, 15, 90)
 time.sleep(3)
-robot.legR[0].set_angles(170, 90, 90)
+robot.legL[id].set_angles(150, 90, 90)
 time.sleep(3)
-robot.legR[0].set_angles(15, 90, 90)
+robot.legL[id].set_angles(30, 90, 90)
+time.sleep(3)
+robot.legL[id].set_angles(90, 90, 90)
+time.sleep(3)
+robot.relax()
+
 
 # def anim(foot, center, rotation):
 #     for leg in legs:
