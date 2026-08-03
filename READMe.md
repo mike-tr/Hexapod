@@ -6,14 +6,15 @@ A custom-designed 6-legged robot built from scratch, featuring 3D-printed parts,
 
 ## Status
 
-**Work in progress** — 3 legs assembled, 3 more printing. Next steps: complete assembly, wire PCB + Raspberry Pi, then software.
+**Work in progress** — mechanical assembly done, IK implemented and working on the real robot. Next step: walking cycle (gait).
 
 - [x] CAD design (legs, chassis, battery holder)
 - [x] STL exports
 - [x] 3 legs assembled
 - [x] Full 6-leg assembly
-- [ ] PCB + Raspberry Pi integration
-- [ ] ROS2 firmware & gait control
+- [x] PCB + Raspberry Pi integration
+- [x] Inverse kinematics
+- [ ] Walking cycle / gait control
 
 ## Assembly Preview
 
@@ -29,6 +30,12 @@ PCB and Pi aren't physically mounted/connected yet, but the legs are already mov
 ![Hexapod half-assembled demo](media/hexapod.gif)
 
 3-leg and 2-leg standing tests both hold, though on 3 legs the body sags a bit — not sure yet if it's the joints flexing or the legs slowly sliding.
+
+### IK Test
+
+Inverse kinematics implemented (with a degree offset per joint) and tested on the physical robot:
+
+![Hexapod IK test](media/iktest.gif)
 
 ## Hardware
 
@@ -64,15 +71,15 @@ Each leg has 3 degrees of freedom (coxa / femur / tibia joints), driven by one M
 
 - **OS:** Raspberry Pi OS
 - **Framework:** ROS2
-- Inverse kinematics node
+- [x] Inverse kinematics node
 - Gait controller (tripod, wave)
 - Teleop interface
 
 ## Roadmap
 
-1. Complete 6-leg mechanical assembly
+1. ~~Complete 6-leg mechanical assembly~~
 2. Mount PCB and Raspberry Pi 5 to chassis
 3. Wire all 18 servos to PCB
 4. Bring up ROS2 environment on Raspberry Pi 5
-5. Implement IK solver and basic gaits (tripod, wave)
+5. ~~Implement IK solver~~ → implement walking cycle / gait (tripod, wave)
 6. Add sensors / teleoperation
