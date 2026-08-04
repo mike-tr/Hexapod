@@ -44,6 +44,7 @@ class HexLeg:
         """Set all three joint angles from a list [coxa, femur, tibia]."""
         if len(angles) != self.NUM_JOINTS:
             raise ValueError(f"Expected {self.NUM_JOINTS} angles, got {len(angles)}")
+        print(angles)
         for servo, angle in zip(self.servos, angles):
             servo.set_angle(angle)
 
