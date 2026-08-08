@@ -31,7 +31,7 @@ class IKSystem3:
         # if norm > 1:
         #     norm = math.sqrt
         
-        return self._angles_from_position(x * self._max_reach, y * self._max_reach, z *self._max_reach)
+        return self.angles_from_position(x * self._max_reach, y * self._max_reach, z *self._max_reach)
 
     def angles_from_position(self, x,y,z):
         # theta1 the angle for first motor

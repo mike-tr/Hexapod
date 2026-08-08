@@ -12,9 +12,9 @@ from iksystem import IKSystem3
 COXA_LENGTH = 60.3
 FEMUR_LENGTH = 89.5
 TIBIA_LENGTH = 121.5
-ZERO_ANGLE1 = 90
-ZERO_ANGLE2 = 90
-ZERO_ANGLE3 = 45
+BASE_ANGLE1 = 90
+BASE_ANGLE2 = 90
+BASE_ANGLE3 = 45
 
 
 MOUNT_POSX_0D = 100.1
@@ -23,23 +23,36 @@ MOUNT_POSX_45D = 75.13
 MOUNT_POSY_45D= 96.52
 MOUNT_Z_OFFSET = 0.0
 
+HOME_LOCAL = (60.0, 0.0, -30.0)
+
 class HexapodConfig:
     """Servo channel mapping and physical parameters for this hexapod."""
     def __init__(self):
         self.controller = ServoController()
-        self.iksys = IKSystem3(COXA_LENGTH, ZERO_ANGLE1, FEMUR_LENGTH, ZERO_ANGLE2, TIBIA_LENGTH, ZERO_ANGLE3)
-        self.legR : list[HexLeg] = [HexLeg("RT", self.controller,18,17,16, -45, (MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET)), 
-                                    HexLeg("RM", self.controller,21,20,19, 0 , (MOUNT_POSX_0D, MOUNT_POSX_0Y, MOUNT_Z_OFFSET)), 
-                                    HexLeg("RB", self.controller,27,23,22, 45, (MOUNT_POSX_45D, -MOUNT_POSY_45D, MOUNT_Z_OFFSET))]
-        self.legL : list[HexLeg] = [HexLeg("LT", self.controller,13,14,15, -45+180, (-MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET)), 
-                                    HexLeg("LM", self.controller,10,11,12, 180, (-MOUNT_POSX_0D, MOUNT_POSX_0Y, MOUNT_Z_OFFSET)), 
-                                    HexLeg("LB", self.controller,31,8,9, 180+45, (-MOUNT_POSX_45D, -MOUNT_POSY_45D, MOUNT_Z_OFFSET))]
+        self.iksys = IKSystem3(COXA_LENGTH, BASE_ANGLE1, FEMUR_LENGTH, BASE_ANGLE2, TIBIA_LENGTH, BASE_ANGLE3)
+        self.legR : list[HexLeg] = [HexLeg("RT", self, 18,17,16, 45, (MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), HOME_LOCAL), 
+                                    HexLeg("RM", self, 21,20,19, 0 , (MOUNT_POSX_0D, MOUNT_POSX_0Y, MOUNT_Z_OFFSET), HOME_LOCAL), 
+                                    HexLeg("RB", self, 27,23,22, -45, (MOUNT_POSX_45D, -MOUNT_POSY_45D, MOUNT_Z_OFFSET), HOME_LOCAL)]
+        self.legL : list[HexLeg] = [HexLeg("LT", self, 13,14,15, 135, (-MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), HOME_LOCAL), 
+                                    HexLeg("LM", self, 10,11,12, 180, (-MOUNT_POSX_0D, MOUNT_POSX_0Y, MOUNT_Z_OFFSET), HOME_LOCAL), 
+                                    HexLeg("LB", self, 31,8,9, -135, (-MOUNT_POSX_45D, -MOUNT_POSY_45D, MOUNT_Z_OFFSET), HOME_LOCAL)]
+        self.legs = self.legL + self.legR
+
+    # @property
+    # def legs(self) -> Servo:
+    #     return 
+
+    def home(self):
+        for leg in self.legs:
+            leg.home()
 
     def relax(self):
-        for leg in self.legR:
+        for leg in self.legs:
             leg.relax()
-        for leg in self.legL:
-            leg.relax()
+        # for leg in self.legR:
+        #     leg.relax()
+        # for leg in self.legL:
+        #     leg.relax()
 
     # def moveLegAngle(self, right: bool, id: int, coxa_angle, femur_angle, tibia_angle):
     #     if right:

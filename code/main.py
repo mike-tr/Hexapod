@@ -2,32 +2,9 @@ from Initialization.servo import Servo
 from Initialization.pca9685 import PCA9685
 from Initialization.adc import ADC
 from Initialization.hexapodConfig import HexapodConfig
+from Initialization.tripodgait import TripodGait
 import time
 
-# print("Testing remote pi")
-
-# servo = Servo()
-
-# # Main program logic follows:
-# if __name__ == '__main__':
-#     print("Now servos will rotate to certain angles.")
-#     print("Please keep the program running when installing the servos.")
-#     print("After that, you can press ctrl-C to end the program.")
-#     servo = Servo()
-#     while True:
-#         try:
-#             for i in range(32):
-#                 if i in [10, 13, 31]:
-#                     servo.set_angle(i, 10)
-#                 elif i in [18, 21, 27]:
-#                     servo.set_angle(i, 170)
-#                 else:
-#                     servo.set_angle(i, 90)
-#             time.sleep(3)
-#         except KeyboardInterrupt:
-#             print("\nEnd of program")
-#             servo.relax()
-#             break
 
 # def test_Adc():
 #     adc = ADC()
@@ -39,73 +16,80 @@ import time
 #     except KeyboardInterrupt:
 #         print ("\nEnd of program")
 
-# for i in range(10):
-#     servo.set_angle(15,180)
-#     print(180)
-#     time.sleep(5)
-#     servo.set_angle(15,0)
-#     print(0)
-#     time.sleep(5)
-# servo.set_angle(15,135)
-# time.sleep(2)
-# servo.set_angle(15,45)
-# time.sleep(2)
-# # servo.set_angle(15,0)
-# # time.sleep(3)
-# # servo.set_angle(15,180)
-# # time.sleep(3)
-# servo.relax()
-
 # test_Adc()
 
-# id = 18
-# servo.set_angle(id, 170)
-# time.sleep(3)
-# servo.set_angle(id, 10)
-# time.sleep(3)
-# servo.set_angle(id, 90)
-# time.sleep(3)
-# # servo.set_angle(15, 10)
-# # time.sleep(3)
-# # servo.set_angle(15, 90)
-# # time.sleep(3)
-# servo.relax()
-
-
-# target = 160
-# while True:
-#     try:
-#         servo.set_angle(id, target)
-#         # servo.set_angle(17, target)
-#         # servo.set_angle(16, target)
-
-#         # servo.set_angle(15, target)
-#         # servo.set_angle(14, target)
-#         # servo.set_angle(13, target)
-#         time.sleep(3)
-#     except KeyboardInterrupt:
-#         print("\nEnd of program")
-#         servo.relax(id)
-#         break
-
-# test_Adc()
 
 robot = HexapodConfig()
+# tripod = TripodGait(2, 60, 25)
+# offsets = [(35, 0, -30) , (35, 0)]
+# # print(time.time())
+
+# t = time.time()
+# prev = time.time()
+# while(t + 5 > time.time()):
+#     dt = time.time() - prev
+#     #print(time.time())
+#     #tripod.reset()
+#     tripod.update(dt, robot.legs, )
+# robot.relax()
 
 # robot.legR[0].set_angles(90, 90, 90)
 
-id = 1
+# id = 1
+
+
+#robot.legL[1].move_leg_aligned(-70, 50, -10)
+y=0
+#time.sleep(1)
+# print("Movement")
+#robot.legL[0].move_leg_aligned(-35, y, -30)
+# time.sleep(3)
+# # robot.legR[0].move_leg_aligned(80, y, 0)
+# # time.sleep(3)
+# robot.legL[1].move_leg_aligned(-35, y, -30)
+# time.sleep(3)
+# robot.legR[1].move_leg_aligned(80, y, 0)
+# time.sleep(3)
+# robot.legL[2].move_leg_aligned(-80, y, 0)
+# time.sleep(3)
+# robot.legR[2].move_leg_aligned(80, y, 0)
+
+# robot.legR[1].move_leg_local(0, 40, 0)
+#robot.legL[1].move_leg_local(40, 70, -40)
+robot.home()
+
+time.sleep(3)
+tripod = TripodGait(2, 30)
+offsets = [(35, 0, -30) , (35, 0)]
+# print(time.time())
+
+t = time.monotonic()
+prev = time.monotonic()
+DT = 0.02
+while(t + 5 > time.monotonic()):
+    dt = time.monotonic() - prev
+    prev = time.monotonic()
+    #print(dt)
+    #tripod.reset()
+    tripod.update(dt, robot.legs, -40)
+    time.sleep(DT)
+
+robot.relax()
+
+# for leg in robot.legs:
+#     #print(leg.id, leg._aligned_home)
+#     leg.move_leg_aligned(leg._aligned_home[0], leg._aligned_home[1], leg._aligned_home[2])
 
 #print("TTTTTTTTTTTTTTTTTTT")
-robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(70, 0, 35))
-time.sleep(1)
-robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(80, 0, -10))
-time.sleep(1)
-robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(70, 0, -10))
-time.sleep(1)
-robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(100, 0, 0))
-time.sleep(1)
-robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(100, 50, 30))
+# robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(70, 0, 35))
+# time.sleep(1)
+# robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(80, 0, -10))
+# time.sleep(1)
+# robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(70, 0, -10))
+# time.sleep(1)
+# robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(100, 0, 0))
+# time.sleep(1)
+# robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(100, 50, 30))
 # print()
 # time.sleep(1)
 # robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(0.7, 0.3, -0.35))
