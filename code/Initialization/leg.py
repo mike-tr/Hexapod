@@ -90,6 +90,7 @@ class HexLeg:
         self._local_y = y
         self._local_z = z
         self._local_x = x
+        print("pos")
         print(x,y,z)
         self.set_angles_from_list(self._ik.angles_from_position_normalized(x,y,z))
 

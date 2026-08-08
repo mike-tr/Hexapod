@@ -1,10 +1,12 @@
 import time
 import sys
 import os
+import math
 
 # Adds the current folder (Initialization) to the search path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from pca9685 import PCA9685
+
 
 
 MIN_TICK = 102
@@ -13,9 +15,14 @@ NUM_TICKS = MAX_TICK - MIN_TICK
 _PWM_FREQUENCY_HZ = 50
 _PWM_OFF_FLAG = 4096
 
+def clamp(n, min_val, max_val):
+    return max(min_val, min(n, max_val))
+
 def _angle_to_duty(angle) -> int:
     if not 0 <= angle <= 180:
-        raise ValueError(f"Angle {angle} out of range [0, 180]")
+        #raise ValueError(f"Angle {angle} out of range [0, 180]")
+        print(f"Angle {angle} out of range [0, 180]")
+        angle = clamp(angle, 0, 180)
     return round((angle / 180) * NUM_TICKS + MIN_TICK)
 
 class ServoController:

@@ -23,7 +23,7 @@ MOUNT_POSX_45D = 75.13
 MOUNT_POSY_45D= 96.52
 MOUNT_Z_OFFSET = 0.0
 
-HOME_LOCAL = (60.0, 0.0, -30.0)
+HOME_LOCAL = (45.0, 0.0, -35.0)
 
 class HexapodConfig:
     """Servo channel mapping and physical parameters for this hexapod."""
