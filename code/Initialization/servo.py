@@ -18,13 +18,6 @@ _PWM_OFF_FLAG = 4096
 def clamp(n, min_val, max_val):
     return max(min_val, min(n, max_val))
 
-def _angle_to_duty(angle) -> int:
-    if not 0 <= angle <= 180:
-        #raise ValueError(f"Angle {angle} out of range [0, 180]")
-        print(f"Angle {angle} out of range [0, 180]")
-        angle = clamp(angle, 0, 180)
-    return round((angle / 180) * NUM_TICKS + MIN_TICK)
-
 class ServoController:
     """
     Owns the physical hardware. All commands go through here.
@@ -45,20 +38,37 @@ class ServoController:
             return self._chips[0x41], channel
         else:
             return self._chips[0x40], channel - 16
+
+class ServoConfig:
+    def __init__(self, id, rotation_offset, physical_limits):
+        self.id = id
+        self.rotation = rotation_offset
+        self.limits = physical_limits
         
+
 class Servo:
     _chip: PCA9685
     _channel: int
-    def __init__(self, controller : ServoController, servo_id):
+    def __init__(self, controller : ServoController, config : ServoConfig):
         self.current_angle = None
-        self.servo_id = servo_id
-        self._chip, self._channel= controller.get_chip_for_channel(servo_id)
+        self.servo_id = config.id
+        self.limits = config.limits
+        self.offset = config.rotation
+        self._chip, self._channel= controller.get_chip_for_channel(self.servo_id)
             
     def set_angle(self, angle) -> None:
-        duty = _angle_to_duty(angle)
+        duty = self._angle_to_duty(angle + self.offset)
         self._chip.set_pwm(self._channel, 0, duty)
-        self.current_angle = angle
+        self.current_angle = angle + self.offset
     
     def relax(self) -> None:
         self._chip.set_pwm(self._channel, _PWM_OFF_FLAG , _PWM_OFF_FLAG)
         self.current_angle = None
+
+    def _angle_to_duty(self, angle) -> int:
+        if not self.limits[0] <= angle <= self.limits[1]:
+            #raise ValueError(f"Angle {angle} out of range [0, 180]")
+            print(f"ID: {self.servo_id}, Angle {angle} out of range [{self.limits[0]}, {self.limits[1]}]")
+            angle = clamp(angle, self.limits[0], self.limits[1])
+            print(f"set angle to {angle}")
+        return round((angle / 180) * NUM_TICKS + MIN_TICK)

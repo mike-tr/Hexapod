@@ -58,7 +58,7 @@ y=0
 #robot.legL[1].move_leg_local(40, 70, -40)
 robot.home()
 
-time.sleep(3)
+time.sleep(5)
 
 
 # robot.legR[0].set_angles_from_list([90, 150, 180])
@@ -66,6 +66,7 @@ time.sleep(3)
 
 
 tripod = TripodGait(2, 50)
+tripod.load_gait(TripodGait.TRIPLE_GAIT)
 # print(time.time())
 
 t = time.monotonic()
@@ -76,11 +77,11 @@ while(t + 10 > time.monotonic()):
     prev = time.monotonic()
     #print(dt)
     #tripod.reset()
-    tripod.update(dt, robot.legs, -40)
+    tripod.update(dt, robot.legs, 70)
     time.sleep(DT)
 
-robot.home()
-time.sleep(3)
+# robot.home()
+# time.sleep(3)
 # while(t + 5 > time.monotonic()):
 #     dt = time.monotonic() - prev
 #     prev = time.monotonic()

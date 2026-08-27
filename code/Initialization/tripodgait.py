@@ -16,10 +16,21 @@ class TripodGait:
     # DUTY = 0.5
     PHASE = (0, 1/3, 2/3, 1/2, 5/6, 1/6)
     DUTY = 2/3
+    DUAL_GAIT = 0
+    TRIPLE_GAIT = 1
 
     def __init__(self, period=1.0, lift=25.0):
         self.period, self.lift = period, lift
         self._t = 0.0
+        self.load_gait(self.DUAL_GAIT)
+
+    def load_gait(self, gate):
+        if gate == self.DUAL_GAIT:
+            self.DUTY = 2/3
+            self.PHASE = (0, 1/3, 2/3, 1/2, 5/6, 1/6)
+        else:
+            self.PHASE = (0, 0.5, 0, 0.5, 0, 0.5)
+            self.DUTY = 0.5
 
     def reset(self):
         self._t = 0.0

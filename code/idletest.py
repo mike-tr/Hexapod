@@ -15,74 +15,28 @@ rotation = 90
 
 id = 0
 
-robot.legL[id].set_angles(90, 90, 90)
-time.sleep(3)
-robot.legL[id].set_angles(90, 90, 170)
-time.sleep(3)
-robot.legL[id].set_angles(90, 90, 15)
-time.sleep(3)
-robot.legL[id].set_angles(90, 170, 90)
-time.sleep(3)
-robot.legL[id].set_angles(90, 15, 90)
-time.sleep(3)
-robot.legL[id].set_angles(150, 90, 90)
-time.sleep(3)
-robot.legL[id].set_angles(30, 90, 90)
-time.sleep(3)
-robot.legL[id].set_angles(90, 90, 90)
-time.sleep(3)
+# robot.legR[0].set_angles(90, 90, 135)
+# time.sleep(6)
 robot.relax()
 
+last = 130
+try:
+    while True:
+        # robot.legR[0].set_angles(0, 0, last)
+        # robot.legR[1].set_angles(0, 0, last)
+        # robot.legR[2].set_angles(0, 0, last)
+        #robot.legL[0].set_angles(0, 0, last)
+        # robot.legL[1].set_angles(0, 0, last)
+        # robot.legL[2].set_angles(0, 0, last)
+        robot.home()
+        time.sleep(1)
 
-# def anim(foot, center, rotation):
-#     for leg in legs:
-#         for i in range(3):
-#             if i == 0:
-#                 servo.set_angle(leg[i], foot)
-#             elif i == 1:
-#                 servo.set_angle(leg[i], center)
-#             else:
-#                 servo.set_angle(leg[i], rotation)
-
-
-
-# while True:
-#     try:
-#         anim(foot, center, rotation)
-#         time.sleep(3)
-#         servo.set_angle(23, 170)
-#         servo.set_angle(14, 170)
-#         time.sleep(3)
-#         anim(foot, center, rotation)
-#         time.sleep(3)
-#         servo.set_angle(20, 170)
-#         servo.set_angle(14, 170)
-#         servo.set_angle(8, 170)
-#         time.sleep(3)
-#         anim(foot, center, rotation)
-#         time.sleep(3)
-#         servo.set_angle(17, 170)
-#         servo.set_angle(8, 170)
-#         time.sleep(3)
-#         anim(foot, center, rotation)
-#         time.sleep(3)
-#         servo.set_angle(11, 170)
-#         servo.set_angle(17, 170)
-#         servo.set_angle(23, 170)
-#         time.sleep(3)
-#     except KeyboardInterrupt:
-#         print("\nEnd of program")
-#         for leg in legs:
-#             for i in range(3):
-#                 servo.relax(leg[i])
-#         break
-
-
-# for i in [13,14,15]:
-#     servo.set_angle(i, 10)
-#     time.sleep(3)
-#     servo.set_angle(i, 170)
-#     time.sleep(3)
-#     servo.set_angle(i, 90)
-# servo.relax()
-
+except KeyboardInterrupt:
+    print("\nProgram stopped by user. Relaxing robot...")
+    
+finally:
+    # This block always runs, ensuring the robot relaxes safely
+    #robot.legR[0].home()
+    time.sleep(1) # Optional brief pause before relaxing
+    robot.relax()
+    print("Robot relaxed successfully.")

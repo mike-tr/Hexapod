@@ -5,7 +5,7 @@ import os
 import math
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from servo import Servo, ServoController
+from servo import Servo, ServoConfig
 from iksystem import IKSystem3
 
 
@@ -19,7 +19,7 @@ class HexLeg:
     TIBIA = 2
     NUM_JOINTS = 3
 
-    def __init__(self, id, config : HexapodConfig, coxa_servo_id, femur_servo_id, tibia_servo_id, rotation, mount_position, home_position):
+    def __init__(self, id, config : HexapodConfig,  coxa : ServoConfig, femur : ServoConfig, tibia : ServoConfig, rotation, mount_position, home_position):
         #self.controller : ServoController = controller
         self.id = id
         self._ik : IKSystem3 = config.iksys
@@ -43,9 +43,9 @@ class HexLeg:
         self._local_y = 0
         self._local_z = 0
         self.servos: list[Servo] = [
-            Servo(config.controller, coxa_servo_id),
-            Servo(config.controller, femur_servo_id),
-            Servo(config.controller, tibia_servo_id),
+            Servo(config.controller, coxa),
+            Servo(config.controller, femur),
+            Servo(config.controller, tibia),
         ]
 
     # Named property access — enables readable individual joint access

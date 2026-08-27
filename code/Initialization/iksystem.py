@@ -3,7 +3,7 @@ import math
 NORMALIZING_FACTOR = 100
 
 class IKSystem3:
-    def __init__(self, L1, angle1, L2, angle2, L3, angle3):
+    def __init__(self, L1, L2, L3):
         # calculate ik, for 3 link chains. We assume that the origin revolves around join1.
         # this class is made to remove redundancies as legs tend to have similar lengths
         self._L1 = L1
@@ -11,9 +11,6 @@ class IKSystem3:
         self._L3 = L3
         self._L2_sqr = L2**2
         self._L3_sqr = L3**2
-        self._angle1 = angle1
-        self._angle2 = angle2
-        self._angle3 = angle3
         self._max_reach = (L1 + L2 + L3) / NORMALIZING_FACTOR 
 
     def angles_from_position_normalized(self, x, y, z):
@@ -57,7 +54,7 @@ class IKSystem3:
         theta2 = t2 + t4
         #print(theta1, theta2, theta3)
         #print(toEuler(theta1), toEuler(theta2), toEuler(theta3))
-        return math.degrees(theta1) + self._angle1, math.degrees(theta2) + self._angle2, math.degrees(theta3) + self._angle3
+        return math.degrees(theta1), math.degrees(theta2), math.degrees(theta3)
 
 
 # s = IKSystem3(0.603, 90, 0.895, 90, 1.215, 45)

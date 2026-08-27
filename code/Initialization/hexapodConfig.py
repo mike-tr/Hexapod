@@ -6,7 +6,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from pca9685 import PCA9685
 
 from leg import HexLeg
-from servo import Servo, ServoController
+from servo import ServoConfig, ServoController
 from iksystem import IKSystem3
 
 COXA_LENGTH = 60.3
@@ -23,19 +23,27 @@ MOUNT_POSX_45D = 75.13
 MOUNT_POSY_45D= 96.52
 MOUNT_Z_OFFSET = 0.0
 
-HOME_LOCAL = (45.0, 0.0, -35.0)
+
+HOME_LOCAL = (40.0, 0.0, -40.0)
 
 class HexapodConfig:
     """Servo channel mapping and physical parameters for this hexapod."""
     def __init__(self):
         self.controller = ServoController()
-        self.iksys = IKSystem3(COXA_LENGTH, BASE_ANGLE1, FEMUR_LENGTH, BASE_ANGLE2, TIBIA_LENGTH, BASE_ANGLE3)
-        self.legR : list[HexLeg] = [HexLeg("RT", self, 18,17,16, 45, (MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), HOME_LOCAL), 
-                                    HexLeg("RM", self, 21,20,19, 0 , (MOUNT_POSX_0D, MOUNT_POSX_0Y, MOUNT_Z_OFFSET), HOME_LOCAL), 
-                                    HexLeg("RB", self, 27,23,22, -45, (MOUNT_POSX_45D, -MOUNT_POSY_45D, MOUNT_Z_OFFSET), HOME_LOCAL)]
-        self.legL : list[HexLeg] = [HexLeg("LT", self, 13,14,15, 135, (-MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), HOME_LOCAL), 
-                                    HexLeg("LM", self, 10,11,12, 180, (-MOUNT_POSX_0D, MOUNT_POSX_0Y, MOUNT_Z_OFFSET), HOME_LOCAL), 
-                                    HexLeg("LB", self, 31,8,9, -135, (-MOUNT_POSX_45D, -MOUNT_POSY_45D, MOUNT_Z_OFFSET), HOME_LOCAL)]
+        self.iksys = IKSystem3(COXA_LENGTH, FEMUR_LENGTH, TIBIA_LENGTH)
+        self.legR : list[HexLeg] = [HexLeg("RT", self, ServoConfig(18, 90, (20, 160)), ServoConfig(17, 90, (20, 160)), ServoConfig(16, -15, (0, 115)), 
+                                           45, (MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), HOME_LOCAL),
+                                    HexLeg("RM", self, ServoConfig(21, 90, (20, 160)), ServoConfig(20, 90, (20, 160)), ServoConfig(19, -15, (0, 115)), 
+                                                                               0, (MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), HOME_LOCAL),
+                                    HexLeg("RB", self, ServoConfig(27, 90, (20, 160)), ServoConfig(23, 90, (20, 160)), ServoConfig(22, -45, (0, 85)), 
+                                                                               -45, (MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), HOME_LOCAL)]
+        self.legL : list[HexLeg] = [
+                                    HexLeg("LT", self, ServoConfig(13, 90, (20, 160)), ServoConfig(14, 90, (20, 160)), ServoConfig(15, 0, (0, 130)), 
+                                           135, (MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), HOME_LOCAL),
+                                    HexLeg("LM", self, ServoConfig(10, 90, (20, 160)), ServoConfig(11, 90, (20, 160)), ServoConfig(12, -5, (0, 130)), 
+                                                                               180, (MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), HOME_LOCAL),
+                                    HexLeg("LB", self, ServoConfig(31, 90, (20, 160)), ServoConfig(8, 90, (20, 160)), ServoConfig(9, -10, (0, 110)), 
+                                                                               -135, (MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), HOME_LOCAL)]
         self.legs = self.legL + self.legR
 
     # @property
