@@ -72,12 +72,13 @@ tripod.load_gait(TripodGait.TRIPLE_GAIT)
 t = time.monotonic()
 prev = time.monotonic()
 DT = 0.02
-while(t + 10 > time.monotonic()):
+wt = 5
+while(t + wt > time.monotonic()):
     dt = time.monotonic() - prev
     prev = time.monotonic()
     #print(dt)
     #tripod.reset()
-    tripod.update(dt, robot.legs, 70)
+    tripod.update(dt * 1.5, robot.legs, 50)
     time.sleep(DT)
 
 # robot.home()

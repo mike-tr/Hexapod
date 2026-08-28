@@ -6,44 +6,32 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from pca9685 import PCA9685
 
 from leg import HexLeg
-from servo import ServoConfig, ServoController
+from servo import ServoController
 from iksystem import IKSystem3
-
-COXA_LENGTH = 60.3
-FEMUR_LENGTH = 89.5
-TIBIA_LENGTH = 121.5
-BASE_ANGLE1 = 90
-BASE_ANGLE2 = 90
-BASE_ANGLE3 = 45
-
-
-MOUNT_POSX_0D = 100.1
-MOUNT_POSX_0Y = 0
-MOUNT_POSX_45D = 75.13
-MOUNT_POSY_45D= 96.52
-MOUNT_Z_OFFSET = 0.0
-
-
-HOME_LOCAL = (40.0, 0.0, -40.0)
+from config_init import Config
 
 class HexapodConfig:
+    HOME_LOCAL : tuple[float, float, float]
+    HOME_RELAXED : tuple[float, float, float]
+    
     """Servo channel mapping and physical parameters for this hexapod."""
     def __init__(self):
         self.controller = ServoController()
-        self.iksys = IKSystem3(COXA_LENGTH, FEMUR_LENGTH, TIBIA_LENGTH)
-        self.legR : list[HexLeg] = [HexLeg("RT", self, ServoConfig(18, 90, (20, 160)), ServoConfig(17, 90, (20, 160)), ServoConfig(16, -15, (0, 115)), 
-                                           45, (MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), HOME_LOCAL),
-                                    HexLeg("RM", self, ServoConfig(21, 90, (20, 160)), ServoConfig(20, 90, (20, 160)), ServoConfig(19, -15, (0, 115)), 
-                                                                               0, (MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), HOME_LOCAL),
-                                    HexLeg("RB", self, ServoConfig(27, 90, (20, 160)), ServoConfig(23, 90, (20, 160)), ServoConfig(22, -45, (0, 85)), 
-                                                                               -45, (MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), HOME_LOCAL)]
-        self.legL : list[HexLeg] = [
-                                    HexLeg("LT", self, ServoConfig(13, 90, (20, 160)), ServoConfig(14, 90, (20, 160)), ServoConfig(15, 0, (0, 130)), 
-                                           135, (MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), HOME_LOCAL),
-                                    HexLeg("LM", self, ServoConfig(10, 90, (20, 160)), ServoConfig(11, 90, (20, 160)), ServoConfig(12, -5, (0, 130)), 
-                                                                               180, (MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), HOME_LOCAL),
-                                    HexLeg("LB", self, ServoConfig(31, 90, (20, 160)), ServoConfig(8, 90, (20, 160)), ServoConfig(9, -10, (0, 110)), 
-                                                                               -135, (MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), HOME_LOCAL)]
+        hexdata = Config()
+        hexdata.load()
+        self.HOME_RELAXED = hexdata.data["HOME_RELAXED"]
+        self.HOME_LOCAL = hexdata.data["HOME_POS"]
+        self.iksys = IKSystem3(hexdata.data["COXA_LENGTH"], hexdata.data["FEMUR_LENGTH"], hexdata.data["TIBIA_LENGTH"])
+
+        self.legR : list[HexLeg] = []
+        self.legL : list[HexLeg] = []
+
+        #print(hexdata.data)
+        for leg in hexdata.LEGS:
+            if leg[0] == 'R':
+                self.legR.append(HexLeg(leg, self, hexdata.data["LEGS"][leg]))
+            else:
+                self.legL.append(HexLeg(leg, self,  hexdata.data["LEGS"][leg]))
         self.legs = self.legL + self.legR
 
     # @property
@@ -53,6 +41,10 @@ class HexapodConfig:
     def home(self):
         for leg in self.legs:
             leg.home()
+
+    def relaxed_home(self):
+        for leg in self.legs:
+            leg.move_leg_local(self.HOME_RELAXED)
 
     def relax(self):
         for leg in self.legs:

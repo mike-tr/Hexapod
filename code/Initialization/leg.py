@@ -5,8 +5,9 @@ import os
 import math
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from servo import Servo, ServoConfig
+from servo import Servo
 from iksystem import IKSystem3
+from config_init import Config
 
 
 from typing import TYPE_CHECKING
@@ -19,34 +20,35 @@ class HexLeg:
     TIBIA = 2
     NUM_JOINTS = 3
 
-    def __init__(self, id, config : HexapodConfig,  coxa : ServoConfig, femur : ServoConfig, tibia : ServoConfig, rotation, mount_position, home_position):
+    def __init__(self, name, config : HexapodConfig, jdata):
         #self.controller : ServoController = controller
-        self.id = id
+        #print(jdata)
+        self.name = name
         self._ik : IKSystem3 = config.iksys
-        self._rsin = math.sin(math.radians(rotation))
-        self._rcos = math.cos(math.radians(rotation))
-        self._local_home = home_position
-        self._aligned_home = self.aligned_pos(home_position[0], home_position[1], home_position[2])
+        self._rsin = math.sin(math.radians(jdata["mount_angle"]))
+        self._rcos = math.cos(math.radians(jdata["mount_angle"]))
+
+        self._local_home = config.HOME_LOCAL
+        self._aligned_home = self.aligned_pos(config.HOME_LOCAL[0], config.HOME_LOCAL[1], config.HOME_LOCAL[2])
 
         self.orientation = 1
-        if(math.fabs(rotation) > 90):
+        if(math.fabs(jdata["mount_angle"]) > 90):
             self.orientation = -1
     
 
-        self._mount_x = mount_position[0]
-        self._mount_y = mount_position[1]
-        self._mount_z = mount_position[2]
+        self._mount_x = jdata["mount_position"][0]
+        self._mount_y = jdata["mount_position"][1]
+        self._mount_z = jdata["mount_position"][2]
 
-        print(id, rotation, mount_position, math.degrees(math.atan2(self._mount_y, self._mount_x)), self.orientation)
+        print(self.name, jdata["mount_angle"], jdata["mount_position"], math.degrees(math.atan2(self._mount_y, self._mount_x)), self.orientation)
 
         self._local_x = 0
         self._local_y = 0
         self._local_z = 0
-        self.servos: list[Servo] = [
-            Servo(config.controller, coxa),
-            Servo(config.controller, femur),
-            Servo(config.controller, tibia),
-        ]
+        self.servos: list[Servo] = []
+        for servo in Config.JOINTS:
+            self.servos.append(Servo(config.controller, jdata[servo]))
+
 
     # Named property access — enables readable individual joint access
     @property
@@ -60,6 +62,9 @@ class HexLeg:
     @property
     def tibia(self) -> Servo:
         return self.servos[self.TIBIA]
+
+    def home(self):
+        self.move_leg_local(self._local_home[0], self._local_home[1], self._local_home[2])
 
     def body_pos(self, x, y, z):
         """transforms position in local space to position in body"""
@@ -85,6 +90,9 @@ class HexLeg:
         """
         self.move_leg_local(self._rcos * x + self._rsin * y, - self._rsin * x + self._rcos * y, z)
 
+    def move_leg_local(self, pos : tuple[float, float, float]):
+        self.move_leg_local(pos[0], pos[1], pos[2])
+
     def move_leg_local(self, x, y, z):
         """Absolute point in leg frame."""
         self._local_y = y
@@ -93,9 +101,6 @@ class HexLeg:
         print("pos")
         print(x,y,z)
         self.set_angles_from_list(self._ik.angles_from_position_normalized(x,y,z))
-
-    def home(self):
-        self.move_leg_local(self._local_home[0], self._local_home[1], self._local_home[2])
 
     def set_angles(self, coxa_angle, femur_angle, tibia_angle):
         self.coxa.set_angle(coxa_angle)

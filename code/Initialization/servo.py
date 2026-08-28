@@ -39,21 +39,21 @@ class ServoController:
         else:
             return self._chips[0x40], channel - 16
 
-class ServoConfig:
-    def __init__(self, id, rotation_offset, physical_limits):
-        self.id = id
-        self.rotation = rotation_offset
-        self.limits = physical_limits
+# class ServoConfig:
+#     def __init__(self, id, rotation_offset, physical_limits):
+#         self.id = id
+#         self.rotation = rotation_offset
+#         self.limits = physical_limits
         
 
 class Servo:
     _chip: PCA9685
     _channel: int
-    def __init__(self, controller : ServoController, config : ServoConfig):
+    def __init__(self, controller : ServoController, data):
         self.current_angle = None
-        self.servo_id = config.id
-        self.limits = config.limits
-        self.offset = config.rotation
+        self.servo_id = data["id"]
+        self.limits = data["rotation_bounds"]
+        self.offset = data["rotation_offset"]
         self._chip, self._channel= controller.get_chip_for_channel(self.servo_id)
             
     def set_angle(self, angle) -> None:
@@ -71,4 +71,5 @@ class Servo:
             print(f"ID: {self.servo_id}, Angle {angle} out of range [{self.limits[0]}, {self.limits[1]}]")
             angle = clamp(angle, self.limits[0], self.limits[1])
             print(f"set angle to {angle}")
+        #print(f"ID: {self.servo_id}, angle : {angle}")
         return round((angle / 180) * NUM_TICKS + MIN_TICK)

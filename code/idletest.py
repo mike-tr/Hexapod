@@ -19,16 +19,17 @@ id = 0
 # time.sleep(6)
 robot.relax()
 
-last = 130
+last = 90
 try:
     while True:
         # robot.legR[0].set_angles(0, 0, last)
         # robot.legR[1].set_angles(0, 0, last)
         # robot.legR[2].set_angles(0, 0, last)
-        #robot.legL[0].set_angles(0, 0, last)
+        # robot.legL[0].set_angles(0, 0, last)
         # robot.legL[1].set_angles(0, 0, last)
         # robot.legL[2].set_angles(0, 0, last)
-        robot.home()
+        #robot.home()
+        robot.relaxed_home()
         time.sleep(1)
 
 except KeyboardInterrupt:

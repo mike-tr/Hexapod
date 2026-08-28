@@ -9,6 +9,7 @@ class IKSystem3:
         self._L1 = L1
         self._L2 = L2
         self._L3 = L3
+        #print(L1, L2, L3)
         self._L2_sqr = L2**2
         self._L3_sqr = L3**2
         self._max_reach = (L1 + L2 + L3) / NORMALIZING_FACTOR 

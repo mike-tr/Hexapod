@@ -1,0 +1,211 @@
+{
+  "COXA_LENGTH": 60.3,
+  "FEMUR_LENGTH": 89.5,
+  "TIBIA_LENGTH": 121.5,
+  "HOME_POS": [
+    40.0,
+    0.0,
+    -45.0
+  ],
+  "HOME_RELAXED": [
+    40.0,
+    0.0,
+    0
+  ],
+  "_note1": "rotation_bounds are servo-command degrees, applied after rotation_offset. ",
+  "_note2": "mount position, is the position the legs sits in relative to boudy (0,0) coordinate whichever you choose it to be.",
+  "LEGS": {
+    "RF": {
+      "mount_angle": 45,
+      "mount_position": [
+        75.13,
+        96.52,
+        0
+      ],
+      "COXA": {
+        "id": 18,
+        "rotation_offset": 90,
+        "rotation_bounds": [
+          20,
+          160
+        ]
+      },
+      "FEMUR": {
+        "id": 17,
+        "rotation_offset": 90,
+        "rotation_bounds": [
+          20,
+          160
+        ]
+      },
+      "TIBIA": {
+        "id": 16,
+        "rotation_offset": -15,
+        "rotation_bounds": [
+          0,
+          115
+        ]
+      }
+    },
+    "RM": {
+      "mount_angle": 0,
+      "mount_position": [
+        100.1,
+        0,
+        0
+      ],
+      "COXA": {
+        "id": 21,
+        "rotation_offset": 90,
+        "rotation_bounds": [
+          30,
+          150
+        ]
+      },
+      "FEMUR": {
+        "id": 20,
+        "rotation_offset": 90,
+        "rotation_bounds": [
+          20,
+          160
+        ]
+      },
+      "TIBIA": {
+        "id": 19,
+        "rotation_offset": -15,
+        "rotation_bounds": [
+          0,
+          115
+        ]
+      }
+    },
+    "RB": {
+      "mount_angle": -45,
+      "mount_position": [
+        75.13,
+        -96.52,
+        0
+      ],
+      "COXA": {
+        "id": 27,
+        "rotation_offset": 90,
+        "rotation_bounds": [
+          20,
+          160
+        ]
+      },
+      "FEMUR": {
+        "id": 23,
+        "rotation_offset": 90,
+        "rotation_bounds": [
+          20,
+          160
+        ]
+      },
+      "TIBIA": {
+        "id": 22,
+        "rotation_offset": -15,
+        "rotation_bounds": [
+          0,
+          115
+        ]
+      }
+    },
+    "LF": {
+      "mount_angle": 135,
+      "mount_position": [
+        -75.13,
+        96.52,
+        0
+      ],
+      "COXA": {
+        "id": 13,
+        "rotation_offset": 90,
+        "rotation_bounds": [
+          20,
+          160
+        ]
+      },
+      "FEMUR": {
+        "id": 14,
+        "rotation_offset": 90,
+        "rotation_bounds": [
+          20,
+          160
+        ]
+      },
+      "TIBIA": {
+        "id": 15,
+        "rotation_offset": 0,
+        "rotation_bounds": [
+          0,
+          130
+        ]
+      }
+    },
+    "LM": {
+      "mount_angle": 180,
+      "mount_position": [
+        -100.1,
+        0,
+        0
+      ],
+      "COXA": {
+        "id": 10,
+        "rotation_offset": 85,
+        "rotation_bounds": [
+          25,
+          145
+        ]
+      },
+      "FEMUR": {
+        "id": 11,
+        "rotation_offset": 90,
+        "rotation_bounds": [
+          20,
+          160
+        ]
+      },
+      "TIBIA": {
+        "id": 12,
+        "rotation_offset": -5,
+        "rotation_bounds": [
+          0,
+          125
+        ]
+      }
+    },
+    "LB": {
+      "mount_angle": -135,
+      "mount_position": [
+        -75.13,
+        -96.52,
+        0
+      ],
+      "COXA": {
+        "id": 31,
+        "rotation_offset": 90,
+        "rotation_bounds": [
+          20,
+          160
+        ]
+      },
+      "FEMUR": {
+        "id": 8,
+        "rotation_offset": 90,
+        "rotation_bounds": [
+          20,
+          160
+        ]
+      },
+      "TIBIA": {
+        "id": 9,
+        "rotation_offset": -10,
+        "rotation_bounds": [
+          0,
+          110
+        ]
+      }
+    }
+  }
+}
