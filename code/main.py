@@ -4,119 +4,63 @@ from Initialization.adc import ADC
 from Initialization.hexapodConfig import HexapodConfig
 from Initialization.tripodgait import TripodGait
 import time
+import threading
+from sshkeyboard import listen_keyboard, stop_listening
 
 
-# def test_Adc():
-#     adc = ADC()
-#     try:
-#         while True:
-#             Power=adc.read_battery_voltage()
-#             print ("The battery voltage is "+str(Power)+'\n')
-#             time.sleep(1)
-#     except KeyboardInterrupt:
-#         print ("\nEnd of program")
-
-# test_Adc()
-
+# current_command = {}
+# for key in ["w","a","s","d"]:
+#     current_command[key] = False
 
 robot = HexapodConfig()
-# tripod = TripodGait(2, 60, 25)
-# offsets = [(35, 0, -30) , (35, 0)]
-# # print(time.time())
 
-# t = time.time()
-# prev = time.time()
-# while(t + 5 > time.time()):
-#     dt = time.time() - prev
-#     #print(time.time())
-#     #tripod.reset()
-#     tripod.update(dt, robot.legs, )
-# robot.relax()
-
-# robot.legR[0].set_angles(90, 90, 90)
-
-# id = 1
-
-
-#robot.legL[1].move_leg_aligned(-70, 50, -10)
-y=0
-#time.sleep(1)
-# print("Movement")
-#robot.legL[0].move_leg_aligned(-35, y, -30)
-# time.sleep(3)
-# # robot.legR[0].move_leg_aligned(80, y, 0)
-# # time.sleep(3)
-# robot.legL[1].move_leg_aligned(-35, y, -30)
-# time.sleep(3)
-# robot.legR[1].move_leg_aligned(80, y, 0)
-# time.sleep(3)
-# robot.legL[2].move_leg_aligned(-80, y, 0)
-# time.sleep(3)
-# robot.legR[2].move_leg_aligned(80, y, 0)
-
-# robot.legR[1].move_leg_local(0, 40, 0)
-#robot.legL[1].move_leg_local(40, 70, -40)
 robot.home()
-
-time.sleep(5)
-
-
-# robot.legR[0].set_angles_from_list([90, 150, 180])
-# time.sleep(3)
-
-
+time.sleep(1)
 tripod = TripodGait(2, 50)
 tripod.load_gait(TripodGait.TRIPLE_GAIT)
-# print(time.time())
 
-t = time.monotonic()
+
+current_command = "none"
+running = True
+def keyboard_listener_worker():
+    """This function runs inside its own thread to handle SSH key events."""
+    global current_command, running
+
+    def press(key):
+        global current_command
+        if key in ["w", "a", "s", "d", "space"]:
+            current_command = key
+            tripod.reset()
+        elif key == "q":
+            print("\nShutting down listener...")
+            stop_listening()
+
+    def release(key):
+        global current_command
+        # Optional: Stop walking when the key is released
+        if key == current_command:
+            current_command = "none"
+
+    # Start the blocking listener loop inside this thread
+    listen_keyboard(on_press=press, on_release=release, sequential=True)
+    running = False  # Signal main thread that we are exiting
+
+
+listener_thread = threading.Thread(target=keyboard_listener_worker, daemon=True)
+listener_thread.start()
+
 prev = time.monotonic()
 DT = 0.02
-wt = 5
-while(t + wt > time.monotonic()):
+SPEED = 1.1
+while running:
     dt = time.monotonic() - prev
     prev = time.monotonic()
-    #print(dt)
-    #tripod.reset()
-    tripod.update(dt * 1.5, robot.legs, 50)
-    time.sleep(DT)
-
-# robot.home()
-# time.sleep(3)
-# while(t + 5 > time.monotonic()):
-#     dt = time.monotonic() - prev
-#     prev = time.monotonic()
-#     #print(dt)
-#     #tripod.reset()
-#     tripod.update(dt, robot.legs, -20)
-#     time.sleep(DT)
+    if current_command == "w":
+        tripod.update(dt * SPEED, robot.legs, 50)
+        time.sleep(DT)
+    elif current_command == "s":
+        tripod.update(dt * SPEED, robot.legs, -50)
+    else:
+        robot.home()
 
 robot.relax()
-
-# for leg in robot.legs:
-#     #print(leg.id, leg._aligned_home)
-#     leg.move_leg_aligned(leg._aligned_home[0], leg._aligned_home[1], leg._aligned_home[2])
-
-#print("TTTTTTTTTTTTTTTTTTT")
-# robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(70, 0, 35))
-# time.sleep(1)
-# robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(80, 0, -10))
-# time.sleep(1)
-# robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(70, 0, -10))
-# time.sleep(1)
-# robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(100, 0, 0))
-# time.sleep(1)
-# robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(100, 50, 30))
-# print()
-# time.sleep(1)
-# robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(0.7, 0.3, -0.35))
-# time.sleep(1)
-# robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(0.7, 0.0, -0.35))
-# time.sleep(1)
-# robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(0.5, 0.4, 0.15))
-# time.sleep(1)
-# robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(0.5, -0.3, -0.55))
-# time.sleep(1)
-# robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(0.5, 0.0, -0.25))
-# time.sleep(1)
-# robot.legL[id].set_angles_from_list(robot.iksys.angles_from_position_normalized(0.96, 0.0, 0.15))

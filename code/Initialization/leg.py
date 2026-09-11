@@ -90,7 +90,7 @@ class HexLeg:
         """
         self.move_leg_local(self._rcos * x + self._rsin * y, - self._rsin * x + self._rcos * y, z)
 
-    def move_leg_local(self, pos : tuple[float, float, float]):
+    def move_leg_local_tuple(self, pos : tuple[float, float, float]):
         self.move_leg_local(pos[0], pos[1], pos[2])
 
     def move_leg_local(self, x, y, z):
@@ -98,8 +98,8 @@ class HexLeg:
         self._local_y = y
         self._local_z = z
         self._local_x = x
-        print("pos")
-        print(x,y,z)
+        #print("pos")
+        #print(x,y,z)
         self.set_angles_from_list(self._ik.angles_from_position_normalized(x,y,z))
 
     def set_angles(self, coxa_angle, femur_angle, tibia_angle):
@@ -111,7 +111,7 @@ class HexLeg:
         """Set all three joint angles from a list [coxa, femur, tibia]."""
         if len(angles) != self.NUM_JOINTS:
             raise ValueError(f"Expected {self.NUM_JOINTS} angles, got {len(angles)}")
-        print(angles)
+        #print(angles)
         for servo, angle in zip(self.servos, angles):
             servo.set_angle(angle)
 

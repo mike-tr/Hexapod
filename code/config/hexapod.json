@@ -3,14 +3,14 @@
   "FEMUR_LENGTH": 89.5,
   "TIBIA_LENGTH": 121.5,
   "HOME_POS": [
-    40.0,
+    55.0,
     0.0,
-    -45.0
+    -35.0
   ],
   "HOME_RELAXED": [
-    40.0,
+    70.0,
     0.0,
-    0
+    -5.0
   ],
   "_note1": "rotation_bounds are servo-command degrees, applied after rotation_offset. ",
   "_note2": "mount position, is the position the legs sits in relative to boudy (0,0) coordinate whichever you choose it to be.",
@@ -32,7 +32,7 @@
       },
       "FEMUR": {
         "id": 17,
-        "rotation_offset": 90,
+        "rotation_offset": 85,
         "rotation_bounds": [
           20,
           160
@@ -64,7 +64,7 @@
       },
       "FEMUR": {
         "id": 20,
-        "rotation_offset": 90,
+        "rotation_offset": 89,
         "rotation_bounds": [
           20,
           160
@@ -72,7 +72,7 @@
       },
       "TIBIA": {
         "id": 19,
-        "rotation_offset": -15,
+        "rotation_offset": -13,
         "rotation_bounds": [
           0,
           115
@@ -104,7 +104,7 @@
       },
       "TIBIA": {
         "id": 22,
-        "rotation_offset": -15,
+        "rotation_offset": -10,
         "rotation_bounds": [
           0,
           115
@@ -128,7 +128,7 @@
       },
       "FEMUR": {
         "id": 14,
-        "rotation_offset": 90,
+        "rotation_offset": 84,
         "rotation_bounds": [
           20,
           160
@@ -136,7 +136,7 @@
       },
       "TIBIA": {
         "id": 15,
-        "rotation_offset": 0,
+        "rotation_offset": 3,
         "rotation_bounds": [
           0,
           130
@@ -152,15 +152,15 @@
       ],
       "COXA": {
         "id": 10,
-        "rotation_offset": 85,
+        "rotation_offset": 90,
         "rotation_bounds": [
-          25,
-          145
+          20,
+          160
         ]
       },
       "FEMUR": {
         "id": 11,
-        "rotation_offset": 90,
+        "rotation_offset": 85,
         "rotation_bounds": [
           20,
           160
@@ -168,7 +168,7 @@
       },
       "TIBIA": {
         "id": 12,
-        "rotation_offset": -5,
+        "rotation_offset": 10,
         "rotation_bounds": [
           0,
           125
@@ -192,7 +192,7 @@
       },
       "FEMUR": {
         "id": 8,
-        "rotation_offset": 90,
+        "rotation_offset": 75,
         "rotation_bounds": [
           20,
           160
@@ -200,7 +200,7 @@
       },
       "TIBIA": {
         "id": 9,
-        "rotation_offset": -10,
+        "rotation_offset": -8,
         "rotation_bounds": [
           0,
           110

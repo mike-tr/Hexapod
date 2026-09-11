@@ -21,6 +21,7 @@ class HexapodConfig:
         hexdata.load()
         self.HOME_RELAXED = hexdata.data["HOME_RELAXED"]
         self.HOME_LOCAL = hexdata.data["HOME_POS"]
+        print(self.HOME_RELAXED, self.HOME_LOCAL)
         self.iksys = IKSystem3(hexdata.data["COXA_LENGTH"], hexdata.data["FEMUR_LENGTH"], hexdata.data["TIBIA_LENGTH"])
 
         self.legR : list[HexLeg] = []
@@ -36,7 +37,7 @@ class HexapodConfig:
 
     # @property
     # def legs(self) -> Servo:
-    #     return 
+    #     return
 
     def home(self):
         for leg in self.legs:
@@ -44,7 +45,12 @@ class HexapodConfig:
 
     def relaxed_home(self):
         for leg in self.legs:
-            leg.move_leg_local(self.HOME_RELAXED)
+            print(self.HOME_RELAXED)
+            leg.move_leg_local_tuple(self.HOME_RELAXED)
+
+    def extended(self):
+        for leg in self.legs:
+            leg.set_angles(0, 0, 90)
 
     def relax(self):
         for leg in self.legs:

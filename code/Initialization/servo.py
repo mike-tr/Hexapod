@@ -54,6 +54,7 @@ class Servo:
         self.servo_id = data["id"]
         self.limits = data["rotation_bounds"]
         self.offset = data["rotation_offset"]
+        print(self.servo_id, self.offset, self.limits)
         self._chip, self._channel= controller.get_chip_for_channel(self.servo_id)
             
     def set_angle(self, angle) -> None:
