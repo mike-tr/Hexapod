@@ -16,7 +16,13 @@ cmd = {"vx": 0.0, "vy": 0.0, "omega": 0.0}
 last_rx = time.time()
 
 robot = HexapodConfig()
+tripod = TripodGait(2, 40)
+tripod.load_gait(TripodGait.TRIPLE_GAIT)
 
+
+prev = time.monotonic()
+DT = 0.02
+SPEED = 1.1
 while True:
     # drain the queue, keep only the newest packet
     while True:
@@ -35,4 +41,14 @@ while True:
 
     #hexapod.set_velocity(cmd["vx"], cmd["vy"], cmd["omega"])
     #hexapod.gait_tick()
+    dt = time.monotonic() - prev
+    prev = time.monotonic()
+    print(cmd)
+    # if current_command == "w":
+    #     tripod.update(dt * SPEED, robot.legs, 50)
+    #     time.sleep(DT)
+    # elif current_command == "s":
+    #     tripod.update(dt * SPEED, robot.legs, -50)
+    # else:
+    #     robot.home()
     time.sleep(1 / 50)
