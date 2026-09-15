@@ -16,7 +16,7 @@ robot = HexapodConfig()
 
 robot.home()
 time.sleep(1)
-tripod = TripodGait(2, 50)
+tripod = TripodGait(2, 40)
 tripod.load_gait(TripodGait.TRIPLE_GAIT)
 
 

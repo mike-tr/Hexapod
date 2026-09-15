@@ -19,16 +19,17 @@ id = 0
 # time.sleep(6)
 robot.relax()
 
-last = 90
+last = 145
 try:
     while True:
         #robot.relaxed_home()
-        robot.legR[0].set_angles(0, 0, last)
-        robot.legR[1].set_angles(0, 0, last)
-        robot.legR[2].set_angles(0, 0, last)
-        robot.legL[0].set_angles(0, 0, last)
-        robot.legL[1].set_angles(0, 0, last)
-        robot.legL[2].set_angles(0, 0, last)
+        # robot.legR[0].set_angles(0, 50, last)
+        # robot.legR[1].set_angles(0, 50, last)
+        # robot.legR[2].set_angles(0, 50, last)
+        # robot.legL[0].set_angles(0, 50, last)
+        # robot.legL[1].set_angles(0, 50, last)
+        # robot.legL[2].set_angles(0, 50, last)
+        robot.home()
         time.sleep(1)
         if input("enter=reload, q=quit: ").strip().lower() == "q":
             break

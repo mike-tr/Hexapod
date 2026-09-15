@@ -20,7 +20,7 @@ class HexLeg:
     TIBIA = 2
     NUM_JOINTS = 3
 
-    def __init__(self, name, config : HexapodConfig, jdata):
+    def __init__(self, name, config : HexapodConfig, jdata, tibia_curve):
         #self.controller : ServoController = controller
         #print(jdata)
         self.name = name
@@ -42,11 +42,17 @@ class HexLeg:
 
         print(self.name, jdata["mount_angle"], jdata["mount_position"], math.degrees(math.atan2(self._mount_y, self._mount_x)), self.orientation)
 
+
+        print("curve : " ,tibia_curve)
         self._local_x = 0
         self._local_y = 0
         self._local_z = 0
         self.servos: list[Servo] = []
         for servo in Config.JOINTS:
+            if servo == "TIBIA":
+                #print("before : ", jdata[servo]["rotation_offset"])
+                jdata[servo]["rotation_offset"] += tibia_curve
+                #print("after : ", jdata[servo]["rotation_offset"])
             self.servos.append(Servo(config.controller, jdata[servo]))
 
 
@@ -103,6 +109,7 @@ class HexLeg:
         self.set_angles_from_list(self._ik.angles_from_position_normalized(x,y,z))
 
     def set_angles(self, coxa_angle, femur_angle, tibia_angle):
+        print(coxa_angle, femur_angle, tibia_angle)
         self.coxa.set_angle(coxa_angle)
         self.femur.set_angle(femur_angle)
         self.tibia.set_angle(tibia_angle)
@@ -111,7 +118,7 @@ class HexLeg:
         """Set all three joint angles from a list [coxa, femur, tibia]."""
         if len(angles) != self.NUM_JOINTS:
             raise ValueError(f"Expected {self.NUM_JOINTS} angles, got {len(angles)}")
-        #print(angles)
+        #print(self.name, angles)
         for servo, angle in zip(self.servos, angles):
             servo.set_angle(angle)
 

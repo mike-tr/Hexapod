@@ -54,23 +54,30 @@ class Servo:
         self.servo_id = data["id"]
         self.limits = data["rotation_bounds"]
         self.offset = data["rotation_offset"]
-        print(self.servo_id, self.offset, self.limits)
+        # self.limits[0] += self.offset
+        # self.limits[1] += self.offset
         self._chip, self._channel= controller.get_chip_for_channel(self.servo_id)
             
     def set_angle(self, angle) -> None:
-        duty = self._angle_to_duty(angle + self.offset)
-        self._chip.set_pwm(self._channel, 0, duty)
+        if not self.limits[0] <= angle <= self.limits[1]:
+            # limit the motor angles in its perspective, hence the limits theoratically should be identical for all servos serving the same purpose.
+            print(f"ID: {self.servo_id}, Angle {angle} out of range [{self.limits[0]}, {self.limits[1]}]")
+            angle = clamp(angle, self.limits[0], self.limits[1])
+            print(f"set angle to {angle}")
         self.current_angle = angle + self.offset
+        duty = self._angle_to_duty(self.current_angle)
+        self._chip.set_pwm(self._channel, 0, duty)
     
     def relax(self) -> None:
         self._chip.set_pwm(self._channel, _PWM_OFF_FLAG , _PWM_OFF_FLAG)
         self.current_angle = None
 
     def _angle_to_duty(self, angle) -> int:
-        if not self.limits[0] <= angle <= self.limits[1]:
+        if not 0 <= angle <= 180:
+            # This is the actual motor range, in raw angles.
             #raise ValueError(f"Angle {angle} out of range [0, 180]")
-            print(f"ID: {self.servo_id}, Angle {angle} out of range [{self.limits[0]}, {self.limits[1]}]")
-            angle = clamp(angle, self.limits[0], self.limits[1])
+            print(f"ID: {self.servo_id}, Angle {angle} out of range [{0}, {180}]")
+            angle = clamp(angle, 0, 180)
             print(f"set angle to {angle}")
         #print(f"ID: {self.servo_id}, angle : {angle}")
         return round((angle / 180) * NUM_TICKS + MIN_TICK)

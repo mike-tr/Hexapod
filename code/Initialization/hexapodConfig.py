@@ -30,9 +30,9 @@ class HexapodConfig:
         #print(hexdata.data)
         for leg in hexdata.LEGS:
             if leg[0] == 'R':
-                self.legR.append(HexLeg(leg, self, hexdata.data["LEGS"][leg]))
+                self.legR.append(HexLeg(leg, self, hexdata.data["LEGS"][leg], hexdata.data["TIBIA_CURVE"]))
             else:
-                self.legL.append(HexLeg(leg, self,  hexdata.data["LEGS"][leg]))
+                self.legL.append(HexLeg(leg, self,  hexdata.data["LEGS"][leg], hexdata.data["TIBIA_CURVE"]))
         self.legs = self.legL + self.legR
 
     # @property

@@ -41,7 +41,7 @@ class TripodGait:
             u = phase / self.DUTY
             return (leg._aligned_home[0], leg._aligned_home[1] + stride * (0.5 - u), leg._aligned_home[2])
         u = (phase - self.DUTY) / (1 - self.DUTY)
-        return (leg._aligned_home[0] + leg.orientation * 25 * math.sin(math.pi * u), leg._aligned_home[1] + stride * (u - 0.5), leg._aligned_home[2] + self.lift * math.sin(math.pi * u))
+        return (leg._aligned_home[0] + leg.orientation * 35 * math.sin(math.pi * u), leg._aligned_home[1] + stride * (u - 0.5), leg._aligned_home[2] + self.lift * math.sin(math.pi * u))
 
     def update(self, dt, legs : list[HexLeg], stride):
         self._t = (self._t + dt / self.period) % 1.0
