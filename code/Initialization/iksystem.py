@@ -1,6 +1,7 @@
 import math
 
 NORMALIZING_FACTOR = 100
+EPS = 1e-3
 
 class IKSystem3:
     def __init__(self, L1, L2, L3):
@@ -42,11 +43,29 @@ class IKSystem3:
 
         csqr =  nxsqr + z**2 
         c = math.sqrt(csqr)
-        if c > (self._L2 + self._L3):
-            raise ValueError(f"Target unreachable: distance {c:.2f} > max {self._L2 + self._L3:.2f}")
+
+        c_min = abs(self._L2 - self._L3) + EPS
+        c_max = (self._L2 + self._L3) - EPS
+        if c > c_max or c < c_min:
+            print(f"Target unreachable: distance {c:.2f} > max {self._L2 + self._L3:.2f} or < {abs(self._L2 - self._L3):.2f}")
+            c_new = min(max(c, c_min), c_max)
+            if c > EPS:
+                nx *= c_new / c
+                z *= c_new / c
+            else:
+                nx, z = c_new, 0.0
+            c = c_new
+            nxsqr = nx * nx
+            csqr = nxsqr + z**2
+
+
+        # if c > (self._L2 + self._L3):
+        #     c = self._L2 + self._L3
+        #     print(f"Target unreachable: distance {c:.2f} > max {self._L2 + self._L3:.2f}")
+        #     #raise ValueError(f"Target unreachable: distance {c:.2f} > max {self._L2 + self._L3:.2f}")
         
-        if c < abs(self._L2 - self._L3):
-            raise ValueError(f"Target too close: distance {c:.2f} < min {abs(self._L2 - self._L3):.2f}")
+        # if c < abs(self._L2 - self._L3):
+        #     raise ValueError(f"Target too close: distance {c:.2f} < min {abs(self._L2 - self._L3):.2f}")
         
         t3 = math.acos((self._L2_sqr + self._L3_sqr - csqr) / (2 * self._L2 * self._L3))
         t2 = math.acos((self._L2_sqr + csqr - self._L3_sqr)/(2 * self._L2 * c))
