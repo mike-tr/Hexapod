@@ -22,6 +22,7 @@ class TripodGait:
     def __init__(self, period=1.0, lift=25.0):
         self.period, self.lift = period, lift
         self._t = 0.0
+        self.swing_bulge = 35
         self.load_gait(self.DUAL_GAIT)
 
     def load_gait(self, gate):
@@ -35,19 +36,30 @@ class TripodGait:
     def reset(self):
         self._t = 0.0
 
-    def foot_delta(self, phase, stride, leg : HexLeg):
+    def foot_delta(self, phase, stroke, leg : HexLeg):
         #print("phase :", phase)
+        sx, sy = stroke
+        hx, hy, hz = leg._aligned_home
         if phase < self.DUTY:
+            # Foot on the ground
             u = phase / self.DUTY
-            return (leg._aligned_home[0], leg._aligned_home[1] + stride * (0.5 - u), leg._aligned_home[2])
+            k = u - 0.5
+            return (hx + sx * k, hy + sy * (0.5 - u), hz)
         u = (phase - self.DUTY) / (1 - self.DUTY)
-        return (leg._aligned_home[0] + leg.orientation * 35 * math.sin(math.pi * u), leg._aligned_home[1] + stride * (u - 0.5), leg._aligned_home[2] + self.lift * math.sin(math.pi * u))
+        k = u - 0.5
+        bulge = leg.orientation * self.swing_buldge * math.sin(math.pi * u)
+        return (hx + sx * k + bulge, hy + sy * k, hz + self.lift * math.sin(math.pi * u))
 
-    def update(self, dt, legs : list[HexLeg], stride):
+    def stroke(self, leg, vx, vy, omega):
+        T = self.period * self.gait.DUTY      # stance duration
+        hx, hy = leg.home_body_xy         # neutral foot pos, body frame
+        return (-(vx - omega * hy)) * T, (-(vy + omega * hx)) * T
+
+    def update(self, dt, legs : list[HexLeg], vx, vy, omega):
         self._t = (self._t + dt / self.period) % 1.0
         #print("time : ", self._t)
         for leg, ph in zip(legs, self.PHASE):
-            d = self.foot_delta((self._t + ph) % 1.0, stride, leg)
-            leg.move_leg_aligned(d[0], d[1], d[2])
+            d = self.foot_delta((self._t + ph) % 1.0, self.stroke(leg, vx, vy, omega), leg)
+            leg.move_leg_aligned(*d)
             #leg.move_leg_aligned()
             
