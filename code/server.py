@@ -2,7 +2,7 @@ import socket, json, time
 from Initialization.servo import Servo
 from Initialization.pca9685 import PCA9685
 from Initialization.adc import ADC
-from Initialization.hexapodConfig import HexapodConfig
+from Initialization.hexapod import Hexapod
 from Initialization.tripodgait import TripodGait
 
 PORT = 9000
@@ -15,9 +15,7 @@ sock.setblocking(False)
 cmd = {"vx": 0.0, "vy": 0.0, "omega": 0.0}
 last_rx = time.time()
 
-robot = HexapodConfig()
-tripod = TripodGait(2, 40)
-tripod.load_gait(TripodGait.TRIPLE_GAIT)
+robot = Hexapod()
 
 
 prev = time.monotonic()
@@ -44,6 +42,15 @@ while True:
     dt = time.monotonic() - prev
     prev = time.monotonic()
     print(cmd)
+    # if abs(cmd["vx"]) > 0:
+    #     tripod.update(dt * SPEED, robot.legs, 50 * cmd["vx"])
+
+
+    if abs(cmd["vx"]) > 0 or abs(cmd["vy"]) > 0 or abs(cmd["omega"]) > 0:
+        robot.tripod.update(dt * SPEED, robot.legs, 50 * cmd["omega"], 50 * cmd["vy"], cmd["vx"] * 25)
+    else:
+        robot.tripod.reset()
+        robot.home()
     # if current_command == "w":
     #     tripod.update(dt * SPEED, robot.legs, 50)
     #     time.sleep(DT)

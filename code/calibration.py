@@ -2,7 +2,7 @@
 # from Initialization.leg import HexLeg
 from Initialization.pca9685 import PCA9685
 from Initialization.adc import ADC
-from Initialization.hexapodConfig import HexapodConfig
+from code.Initialization.hexapod import HexapodConfig
 import time
 
 # print("Testing remote pi")

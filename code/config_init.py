@@ -53,7 +53,7 @@ class Config:
 
     def generate_empty(self):
         print("Generating a new dummy json file, with fake data")
-        data = {"COXA_LENGTH" : 0, "FEMUR_LENGTH" : 0, "TIBIA_LENGTH" : 0, "TIBIA_CURVE" : 0}
+        data = {"COXA_LENGTH" : 0, "FEMUR_LENGTH" : 0, "TIBIA_LENGTH" : 0, "TIBIA_CURVE" : 0, "POSITION_SCALE" : 100}
         data["HOME_POS"] = (40.0, 0.0, -45.0)
         data["HOME_RELAXED"] = (40.0, 0.0, 0)
         data["_note1"] = "rotation_bounds are servo-command degrees, applied after rotation_offset. "

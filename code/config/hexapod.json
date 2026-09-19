@@ -3,12 +3,13 @@
   "FEMUR_LENGTH": 89.5,
   "TIBIA_LENGTH": 154.745,
   "TIBIA_CURVE": -25.255,
-  "HOME_POS": [
+  "POSITION_SCALE" : 100,
+  "HOME_POS_NORM": [
     40.0,
     0.0,
     -30.0
   ],
-  "HOME_RELAXED": [
+  "HOME_RELAXED_NORM": [
     70.0,
     0.0,
     -5.0

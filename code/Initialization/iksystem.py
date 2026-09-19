@@ -1,4 +1,12 @@
+from __future__ import annotations
+import time
+import sys
+import os
 import math
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from vector import Vec3
+
 
 NORMALIZING_FACTOR = 100
 EPS = 1e-3
@@ -15,7 +23,11 @@ class IKSystem3:
         self._L3_sqr = L3**2
         self._max_reach = (L1 + L2 + L3) / NORMALIZING_FACTOR 
 
-    def angles_from_position_normalized(self, x, y, z):
+    @property
+    def max_reach(self):
+        return self._L1 + self._L2 + self._L3
+
+    def angles_from_position_normalized(self, pos : Vec3):
         """Ik by normalized coordinates, x=NORMALIZING_FACTOR means full extension outward.
         """
         # print(x * self.max_reach, y * self.max_reach, z *self.max_reach)
@@ -29,18 +41,20 @@ class IKSystem3:
         # print(norm)
         # if norm > 1:
         #     norm = math.sqrt
-        
-        return self.angles_from_position(x * self._max_reach, y * self._max_reach, z *self._max_reach)
+        #print("pre", pos)
+        return self.angles_from_position(pos * self.max_reach)
 
-    def angles_from_position(self, x,y,z):
+    def angles_from_position(self, pos):
+        #print("after", pos)
         # theta1 the angle for first motor
         # looking at the side view from motor2, (nx,z) is the point out tip should reach in that view.
         # c is the distance between motor2 and the tip.
-        theta1 = math.atan2(y,x)
-        nx = (math.sqrt(x**2 + y**2) - self._L1)
+        theta1 = math.atan2(pos.y, pos.x)
+        nx = (math.sqrt(pos.x**2 + pos.y**2) - self._L1)
         nxsqr = nx**2
         #print( nx)
 
+        z = pos.z
         csqr =  nxsqr + z**2 
         c = math.sqrt(csqr)
 
@@ -57,15 +71,6 @@ class IKSystem3:
             c = c_new
             nxsqr = nx * nx
             csqr = nxsqr + z**2
-
-
-        # if c > (self._L2 + self._L3):
-        #     c = self._L2 + self._L3
-        #     print(f"Target unreachable: distance {c:.2f} > max {self._L2 + self._L3:.2f}")
-        #     #raise ValueError(f"Target unreachable: distance {c:.2f} > max {self._L2 + self._L3:.2f}")
-        
-        # if c < abs(self._L2 - self._L3):
-        #     raise ValueError(f"Target too close: distance {c:.2f} < min {abs(self._L2 - self._L3):.2f}")
         
         t3 = math.acos((self._L2_sqr + self._L3_sqr - csqr) / (2 * self._L2 * self._L3))
         t2 = math.acos((self._L2_sqr + csqr - self._L3_sqr)/(2 * self._L2 * c))
