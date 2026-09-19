@@ -6,7 +6,11 @@ A custom-designed 6-legged robot built from scratch, featuring 3D-printed parts,
 
 ## Status
 
-**Work in progress** — all milestones so far are done: the robot is fully assembled, walks (tripod gait) and turns. Gait parameters can likely still be tuned for smoother motion. Next goal: add a camera and start processing its signal.
+**Work in progress** — all milestones so far are done: the robot
+
+https://github.com/user-attachments/assets/ba36490c-4319-432a-bacf-54f89491a823
+
+ is fully assembled, walks (tripod gait) and turns. Gait parameters can likely still be tuned for smoother motion. Next goal: add a camera and start processing its signal.
 
 - [x] CAD design (legs, chassis, battery holder)
 - [x] STL exports
@@ -24,28 +28,6 @@ A custom-designed 6-legged robot built from scratch, featuring 3D-printed parts,
   <img src="media/2legs+1leg_assembled.jpeg" width="32%" />
   <img src="media/printed_leg.jpeg" width="32%" />
 </p>
-
-### Half-Assembled Demo
-
-PCB and Pi aren't physically mounted/connected yet, but the legs are already moving:
-
-![Hexapod half-assembled demo](media/hexapod.gif)
-
-3-leg and 2-leg standing tests both hold, though on 3 legs the body sags a bit — not sure yet if it's the joints flexing or the legs slowly sliding.
-
-### IK Test
-
-Inverse kinematics implemented (with a degree offset per joint) and tested on the physical robot:
-
-![Hexapod IK test](media/iktest.gif)
-
-### Walking Demo
-
-Walking and turning on the fully assembled robot (parameters still have room for tuning):
-
-<video src="https://github.com/mike-tr/Hexapod/raw/main/media/walkingdemo.mp4" controls muted width="70%"></video>
-
-[Direct link to the video](media/walkingdemo.mp4)
 
 ## Hardware
 
