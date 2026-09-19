@@ -44,6 +44,12 @@ while True:
     dt = time.monotonic() - prev
     prev = time.monotonic()
     print(cmd)
+    # if abs(cmd["vx"]) > 0:
+    #     tripod.update(dt * SPEED, robot.legs, 50 * cmd["vx"])
+
+
+    if abs(cmd["vx"]) > 0 or abs(cmd["vy"]) > 0 or abs(cmd["omega"]) > 0:
+        tripod.update(dt * SPEED, robot.legs, 50 * cmd["vx"], 50 * cmd["vy"], cmd["omega"] * 15)
     # if current_command == "w":
     #     tripod.update(dt * SPEED, robot.legs, 50)
     #     time.sleep(DT)

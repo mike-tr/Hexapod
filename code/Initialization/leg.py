@@ -7,12 +7,14 @@ import math
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from servo import Servo
 from iksystem import IKSystem3
+from vector import Vec3
 from config_init import Config
 
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from hexapodConfig import HexapodConfig
+    from hexapod import Hexapod
+
 
 class HexLeg:
     COXA = 0
@@ -20,40 +22,54 @@ class HexLeg:
     TIBIA = 2
     NUM_JOINTS = 3
 
-    def __init__(self, name, config : HexapodConfig, jdata, tibia_curve):
+    def __init__(self, name, brain : Hexapod, jdata, tibia_curve):
         #self.controller : ServoController = controller
         #print(jdata)
+        self._current_pos : Vec3
+        self.servos: list[Servo]
+        self._rsin : float
+        self._rcos : float
+        self._local_home : Vec3
+        self._aligned_home : Vec3
+        self.orientation : int
+        self._mount_pos : Vec3
+        self.home_body_xy : tuple[float, float]
+
+        self.brain = brain
         self.name = name
-        self._ik : IKSystem3 = config.iksys
+        self._ik : IKSystem3 = brain.iksys
+        self.reload(jdata, tibia_curve)
+
+        v = Vec3(40, 0, -30)
+        r = self.body_to_local(self.local_to_body(v))
+        assert all(abs(a - b) < 1e-9 for a, b in zip(r, v)), f"{self.name}: frame round-trip failed"
+        print(self.name, self.local_to_body(Vec3(40, 0, -30)))
+
+    def reload(self, jdata, tibia_curve):
+        self._current_pos = Vec3(0, 0, 0)
+
         self._rsin = math.sin(math.radians(jdata["mount_angle"]))
         self._rcos = math.cos(math.radians(jdata["mount_angle"]))
 
-        self._local_home = config.HOME_LOCAL
-        self._aligned_home = self.aligned_pos(config.HOME_LOCAL[0], config.HOME_LOCAL[1], config.HOME_LOCAL[2])
+        self._local_home = self.brain.HOME_LOCAL
+        self._aligned_home = self.local_to_aligned(self.brain.HOME_LOCAL)
 
         self.orientation = 1
         if(math.fabs(jdata["mount_angle"]) > 90):
             self.orientation = -1
     
-
-        self._mount_x = jdata["mount_position"][0]
-        self._mount_y = jdata["mount_position"][1]
-        self._mount_z = jdata["mount_position"][2]
-
-        print(self.name, jdata["mount_angle"], jdata["mount_position"], math.degrees(math.atan2(self._mount_y, self._mount_x)), self.orientation)
+        self._mount_pos = Vec3(*jdata["mount_position"])
+        # self.home_body_xy = (self._aligned_home[0] + self._mount_pos[0],
+        #         self._aligned_home[1] + self._mount_pos[1])
 
 
-        print("curve : " ,tibia_curve)
-        self._local_x = 0
-        self._local_y = 0
-        self._local_z = 0
         self.servos: list[Servo] = []
         for servo in Config.JOINTS:
             if servo == "TIBIA":
                 #print("before : ", jdata[servo]["rotation_offset"])
                 jdata[servo]["rotation_offset"] += tibia_curve
                 #print("after : ", jdata[servo]["rotation_offset"])
-            self.servos.append(Servo(config.controller, jdata[servo]))
+            self.servos.append(Servo(self.brain.controller, jdata[servo]))
 
 
     # Named property access — enables readable individual joint access
@@ -69,47 +85,57 @@ class HexLeg:
     def tibia(self) -> Servo:
         return self.servos[self.TIBIA]
 
+    @property
+    def home_body_pos(self):
+        return self.local_to_body(self._local_home)
+
     def home(self):
-        self.move_leg_local(self._local_home[0], self._local_home[1], self._local_home[2])
+        self.move_leg(self._local_home)
 
-    def body_pos(self, x, y, z):
+    def local_to_aligned(self, pos : Vec3):
+        """transforms position in local space to position in aligned space (i.e. centred around leg, but axes aligned with body)"""
+        nx = self._rcos * pos.x - self._rsin * pos.y
+        ny = self._rsin * pos.x + self._rcos * pos.y
+        return Vec3(nx, ny, pos.z)
+
+    def aligned_to_local(self, pos : Vec3):
+        nx = self._rcos * pos.x + self._rsin * pos.y
+        ny = -self._rsin * pos.x + self._rcos * pos.y
+        return Vec3(nx, ny, pos.z)
+
+    def aligned_to_body(self, pos: Vec3):
+        return pos + self._mount_pos
+
+    def body_to_aligned(self, pos: Vec3):
+        return pos - self._mount_pos
+
+    def local_to_body(self, pos : Vec3):
         """transforms position in local space to position in body"""
-        nx = self._rcos * x - self._rsin * y + self._mount_x
-        ny = self._rsin * x + self._rcos * y + self._mount_y
-        return (nx, ny, z + self._mount_z)
+        return self.aligned_to_body(self.local_to_aligned(pos))
 
-    def aligned_pos(self, x, y, z):
-        """transforms position in local space to aligned position"""
-        nx = self._rcos * x - self._rsin * y
-        ny = self._rsin * x + self._rcos * y
-        return (nx, ny, z)
+    def body_to_local(self, pos : Vec3):
+        return self.aligned_to_local(self.body_to_aligned(pos))
 
-    def move_leg_body(self, x, y, z):
+    def move_leg_body(self, pos : Vec3):
         """Absolute point in body frame (origin = body center)."""
-        self.move_leg(x - self._mount_x, y - self._mount_y, z - self.mount_z)
-    
-    def move_leg_aligned(self, x, y, z):
+        self.move_leg(self.body_to_local(pos))
+
+    ######################### FIXED till here
+    def move_leg_aligned(self, pos : Vec3):
         """Body-aligned axes, origin at this leg's coxa axis.
 
         Use for translation deltas — mount offset cancels, so all six
         legs take the same vector. For rotation, use move_leg_body().
         """
-        self.move_leg_local(self._rcos * x + self._rsin * y, - self._rsin * x + self._rcos * y, z)
+        self.move_leg(self.aligned_to_local(pos))
 
-    def move_leg_local_tuple(self, pos : tuple[float, float, float]):
-        self.move_leg_local(pos[0], pos[1], pos[2])
-
-    def move_leg_local(self, x, y, z):
+    def move_leg(self, pos : Vec3):
         """Absolute point in leg frame."""
-        self._local_y = y
-        self._local_z = z
-        self._local_x = x
-        #print("pos")
-        #print(x,y,z)
-        self.set_angles_from_list(self._ik.angles_from_position_normalized(x,y,z))
+        self._current_pos = pos
+        self.set_angles_from_list(self._ik.angles_from_position(pos))
 
     def set_angles(self, coxa_angle, femur_angle, tibia_angle):
-        print(coxa_angle, femur_angle, tibia_angle)
+        #print(coxa_angle, femur_angle, tibia_angle)
         self.coxa.set_angle(coxa_angle)
         self.femur.set_angle(femur_angle)
         self.tibia.set_angle(tibia_angle)
