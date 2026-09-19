@@ -16,8 +16,8 @@ def deadzone(v, t=0.12):
 while True:
     pygame.event.pump()
     msg = {
-        "vx":    -deadzone(js.get_axis(1)),
-        "vy":     deadzone(js.get_axis(0)),
+        "vx":    -deadzone(js.get_axis(0)),
+        "vy":     deadzone(js.get_axis(1)),
         "omega":  deadzone(js.get_axis(3)),
     }
     print(msg)

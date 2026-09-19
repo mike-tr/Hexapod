@@ -6,7 +6,7 @@ A custom-designed 6-legged robot built from scratch, featuring 3D-printed parts,
 
 ## Status
 
-**Work in progress** — mechanical assembly done, IK implemented and working on the real robot. Next step: walking cycle (gait).
+**Work in progress** — all milestones so far are done: the robot is fully assembled, walks (tripod gait) and turns. Gait parameters can likely still be tuned for smoother motion. Next goal: add a camera and start processing its signal.
 
 - [x] CAD design (legs, chassis, battery holder)
 - [x] STL exports
@@ -14,7 +14,9 @@ A custom-designed 6-legged robot built from scratch, featuring 3D-printed parts,
 - [x] Full 6-leg assembly
 - [x] PCB + Raspberry Pi integration
 - [x] Inverse kinematics
-- [ ] Walking cycle / gait control
+- [x] Walking cycle / gait control (walking + turning)
+- [ ] Camera integration
+- [ ] Camera signal processing
 
 ## Assembly Preview
 
@@ -36,6 +38,14 @@ PCB and Pi aren't physically mounted/connected yet, but the legs are already mov
 Inverse kinematics implemented (with a degree offset per joint) and tested on the physical robot:
 
 ![Hexapod IK test](media/iktest.gif)
+
+### Walking Demo
+
+Walking and turning on the fully assembled robot (parameters still have room for tuning):
+
+<video src="https://github.com/mike-tr/Hexapod/raw/main/media/walkingdemo.mp4" controls muted width="70%"></video>
+
+[Direct link to the video](media/walkingdemo.mp4)
 
 ## Hardware
 
@@ -67,19 +77,21 @@ All STL files are in [cad/stl/](cad/stl/). Source FreeCAD files are in [cad/free
 
 Each leg has 3 degrees of freedom (coxa / femur / tibia joints), driven by one MG996R servo each.
 
-## Planned Software Stack
+## Software Stack
 
 - **OS:** Raspberry Pi OS
-- **Framework:** ROS2
-- [x] Inverse kinematics node
-- Gait controller (tripod, wave)
-- Teleop interface
+- **Language:** Python (control code in [code/](code/), remote client in [client/](client/))
+- [x] Inverse kinematics
+- [x] Gait controller (tripod gait, walking + turning)
+- [x] Client/server remote control
+- [ ] Camera + vision processing
 
 ## Roadmap
 
 1. ~~Complete 6-leg mechanical assembly~~
-2. Mount PCB and Raspberry Pi 5 to chassis
-3. Wire all 18 servos to PCB
-4. Bring up ROS2 environment on Raspberry Pi 5
-5. ~~Implement IK solver~~ → implement walking cycle / gait (tripod, wave)
-6. Add sensors / teleoperation
+2. ~~Mount PCB and Raspberry Pi 5 to chassis~~
+3. ~~Wire all 18 servos to PCB~~
+4. ~~Implement IK solver~~
+5. ~~Implement walking cycle / gait (walking + turning)~~
+6. Tune gait parameters
+7. Add a camera and process its signal
