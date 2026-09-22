@@ -20,11 +20,12 @@ class TripodGait:
     DUAL_GAIT = 0
     TRIPLE_GAIT = 1
 
-    def __init__(self, norm_factor, period=1.0, lift=25.0):
+    def __init__(self, norm_factor, max_reach, period=1.0, lift=25.0):
         self.period, self.lift = period, lift
         self.norm_factor = norm_factor
+        self.max_reach = max_reach
         self._t = 0.0
-        self.swing_bulge = 35 * norm_factor
+        self.swing_bulge = 25 * norm_factor
         self.load_gait(self.DUAL_GAIT)
 
     def load_gait(self, gate):
@@ -57,12 +58,28 @@ class TripodGait:
         #hx, hy = leg.home_body_xy         # neutral foot pos, body frame
         return (-(vx - omega * leg.home_body_pos.y * 0.01)) * T, (-(vy + omega * leg.home_body_pos.x * 0.01)) * T
 
+    
+
     def update(self, dt, legs : list[HexLeg], vx, vy, omega):
         self._t = (self._t + dt / self.period) % 1.0
         #print("time : ", self._t)
+
+        commands = []
+        max_length = 0
         for leg, ph in zip(legs, self.PHASE):
             d = self.foot_delta((self._t + ph) % 1.0, self.stroke(leg, vx, vy, omega), leg)
+            length = d.lengthSquared()
+            if length > max_length:
+                max_length = length
+            commands.append(d)
+
+        factor = 1
+        if max_length > self.max_reach**2:
+            factor = self.max_reach / math.sqrt(max_length)
+        for leg, command in zip(legs, commands):
             #print("what is that", d)
-            leg.move_leg_aligned(d)
+            if factor > 1:
+                command *= factor
+            leg.move_leg_aligned(command)
             #leg.move_leg_aligned()
             
