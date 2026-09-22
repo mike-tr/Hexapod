@@ -15,10 +15,17 @@ def deadzone(v, t=0.12):
 
 while True:
     pygame.event.pump()
+    hx, hy = js.get_hat(0)
+    for i in range(js.get_numaxes()):
+        print(i, round(js.get_axis(i), 2))
     msg = {
-        "vx":    -deadzone(js.get_axis(0)),
-        "vy":     deadzone(js.get_axis(1)),
-        "omega":  deadzone(js.get_axis(3)),
+        "lx":    -deadzone(js.get_axis(0)),
+        "ly":     deadzone(js.get_axis(1)),
+        "rx":  deadzone(js.get_axis(2)),
+        "ry":  deadzone(js.get_axis(3)),
+        "hx": hx,
+        "hy": hy,
+        "rt":  deadzone(js.get_axis(5))
     }
     print(msg)
     sock.sendto(json.dumps(msg).encode(), ROBOT)
