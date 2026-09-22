@@ -86,7 +86,7 @@ class HexLeg:
         return self.servos[self.TIBIA]
 
     @property
-    def home_body_pos(self):
+    def home_body_pos(self) -> Vec3:
         return self.local_to_body(self._local_home)
 
     def home(self):

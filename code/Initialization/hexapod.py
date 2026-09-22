@@ -42,7 +42,8 @@ class Hexapod:
                 self.legL.append(HexLeg(leg, self,  hexdata.data["LEGS"][leg], hexdata.data["TIBIA_CURVE"]))
         self.legs = self.legL + self.legR
 
-        self.tripod = TripodGait(self.norm_to_mm_factor, 2, 40)
+        self.max_reach = hexdata.data["COXA_LENGTH"] + hexdata.data["FEMUR_LENGTH"] + hexdata.data["TIBIA_LENGTH"]
+        self.tripod = TripodGait(self.norm_to_mm_factor, self.max_reach ,2, 40)
         self.tripod.load_gait(TripodGait.TRIPLE_GAIT)
 
     # @property
@@ -65,6 +66,14 @@ class Hexapod:
     def relax(self):
         for leg in self.legs:
             leg.relax()
+
+    def move_body(self, pose : Vec3, yaw_deg, pitch_deg, roll_deg):
+        """
+        Move the hexapod body from its natural standing position to pos, and then apply body rotations.
+        """
+        for leg in self.legs:
+            p : Vec3 = leg.home_body_pos - pose
+            leg.move_leg_body(p.rotate_inv(yaw_deg, pitch_deg, roll_deg))
         # for leg in self.legR:
         #     leg.relax()
         # for leg in self.legL:
