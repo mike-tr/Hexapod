@@ -17,11 +17,11 @@
   "_note1": "rotation_bounds are servo-command degrees, applied after rotation_offset. ",
   "_note2": "mount position, is the position the legs sits in relative to boudy (0,0) coordinate whichever you choose it to be.",
   "LEGS": {
-    "RB": {
-      "mount_angle": -45,
+    "RF": {
+      "mount_angle": 45,
       "mount_position": [
         75.13,
-        -96.52,
+        96.52,
         0
       ],
       "COXA": {
@@ -81,11 +81,11 @@
         ]
       }
     },
-    "RF": {
-      "mount_angle": 45,
+    "RB": {
+      "mount_angle": -45,
       "mount_position": [
         75.13,
-        96.52,
+        -96.52,
         0
       ],
       "COXA": {
@@ -113,11 +113,11 @@
         ]
       }
     },
-    "LB": {
-      "mount_angle": -135,
+    "LF": {
+      "mount_angle": 135,
       "mount_position": [
         -75.13,
-        -96.52,
+        96.52,
         0
       ],
       "COXA": {
@@ -177,11 +177,11 @@
         ]
       }
     },
-    "LF": {
-      "mount_angle": 135,
+    "LB": {
+      "mount_angle": -135,
       "mount_position": [
         -75.13,
-        96.52,
+        -96.52,
         0
       ],
       "COXA": {

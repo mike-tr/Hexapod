@@ -5,6 +5,7 @@ from Initialization.adc import ADC
 from Initialization.hexapod import Hexapod
 from Initialization.tripodgait import TripodGait
 from Initialization.vector import Vec3
+from Initialization.hexapodBrain import HexapodBrain
 
 PORT = 9000
 WATCHDOG = 0.5  # seconds without a packet -> stop
@@ -17,14 +18,16 @@ cmd = {"lx": 0.0, "ly": 0.0, "rx": 0.0, "ry" : 0.0, "hx": 0.0, "hy": 0.0, "rt": 
 last_rx = time.time()
 
 robot = Hexapod()
-
+brain = HexapodBrain(robot)
 
 prev = time.monotonic()
 counter = 0
 DT = 0.02
 SPEED = 1.1
-Strength = 5
+Strength = 20
 Angle = 5
+Height = 0
+
 while True:
     # drain the queue, keep only the newest packet
     while True:
@@ -50,28 +53,34 @@ while True:
     #     tripod.update(dt * SPEED, robot.legs, 50 * cmd["vx"])
 
     if cmd["rt"] < 0.5:
-        if abs(cmd["lx"]) > 0 or abs(cmd["ly"]) > 0 or abs(cmd["rx"]) > 0:
-            robot.tripod.update(dt * SPEED, robot.legs, 35 * cmd["rx"], 50 * cmd["ly"], cmd["lx"] * 25)
-        else:
-            robot.tripod.reset()
-            robot.home()
+        # if abs(cmd["lx"]) > 0 or abs(cmd["ly"]) > 0 or abs(cmd["rx"]) > 0:
+        #     robot.tripod.update(dt * SPEED, robot.legs, 35 * cmd["rx"], 50 * cmd["ly"], cmd["lx"] * 25)
+        # else:
+        #     robot.tripod.reset()
+        #     robot.home()
 
-        if cmd["hy"] == 1 and counter % 20:
-            SPEED += 0.01
-        if cmd["hy"] == -1 and counter % 20:
-            SPEED -= 0.01
+        brain.set_velocities(35 * cmd["rx"], 50 * cmd["ly"], cmd["lx"] * 25)
+        brain.set_offset((0,0,0), 0,0,0)
+        #brain.set_offset((0,0,0), 0,0,0)
+        if abs(cmd["hy"]) == 1:
+            Height += 3 * dt * cmd["hy"]
+            robot.set_height(Height)
+        if abs(cmd["hx"]) == 1:
+            SPEED += 3 * dt * cmd["hx"]
     else:
-        robot.move_body(Vec3(cmd["lx"], cmd["ly"], 0) * Strength, 0, cmd["ry"] * Angle, cmd["rx"] * Angle)
+        #robot.move_body(Vec3(cmd["lx"], cmd["ly"], Height) * Strength, 0, cmd["rx"] * Angle, cmd["ry"] * Angle)
+        brain.set_offset(Vec3(cmd["lx"], cmd["ly"], 0) * Strength, 0, cmd["rx"] * Angle, cmd["ry"] * Angle)
         if abs(cmd["hy"]) == 1:
             Strength += 3 * dt * cmd["hy"]
         if abs(cmd["hx"]) == 1:
             Angle += 3 * dt * cmd["hx"]
 
 
-    if counter % 100:
-        print(cmd)
-        print(SPEED, Strength, Angle)
+    # if counter % 100:
+    #     print(cmd)
+    #     print(SPEED, Strength, Angle)
     counter += 1
+    brain.update(dt * SPEED)
     # if current_command == "w":
     #     tripod.update(dt * SPEED, robot.legs, 50)
     #     time.sleep(DT)

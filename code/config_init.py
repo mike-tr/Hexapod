@@ -54,15 +54,15 @@ class Config:
     def generate_empty(self):
         print("Generating a new dummy json file, with fake data")
         data = {"COXA_LENGTH" : 0, "FEMUR_LENGTH" : 0, "TIBIA_LENGTH" : 0, "TIBIA_CURVE" : 0, "POSITION_SCALE" : 100}
-        data["HOME_POS"] = (40.0, 0.0, -45.0)
-        data["HOME_RELAXED"] = (40.0, 0.0, 0)
+        data["HOME_POS_NORM"] = (40.0, 0.0, -45.0)
+        data["HOME_RELAXED_NORM"] = (40.0, 0.0, 0)
         data["_note1"] = "rotation_bounds are servo-command degrees, applied after rotation_offset. "
         data["_note2"] = "mount position, is the position the legs sits in relative to boudy (0,0) coordinate whichever you choose it to be."
         data["LEGS"] = {}
         for leg in self.LEGS:
             data["LEGS"][leg] = { "mount_angle" : 0, "mount_position" : (0,0,0) }
             for joint in self.JOINTS:
-                data["LEGS"][leg][joint] = { "id" : 0, "rotation_offset" : 90, "rotation_bounds" : (0, 180)}
+                data["LEGS"][leg][joint] = { "id" : 0, "sign" : 1, "rotation_offset" : 90, "rotation_bounds" : (0, 180)}
         self.jsave(data, self.PATH)
 
 def main():

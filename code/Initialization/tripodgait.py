@@ -39,6 +39,9 @@ class TripodGait:
     def reset(self):
         self._t = 0.0
 
+    # def grounded(self, epsilon):
+
+
     def foot_delta(self, phase, stroke, leg : HexLeg):
         #print("phase :", phase)
         sx, sy = stroke
@@ -46,8 +49,8 @@ class TripodGait:
         if phase < self.DUTY:
             # Foot on the ground
             u = phase / self.DUTY
-            k = (u - 0.5) * self.norm_factor
-            return Vec3(hx + sx * k, hy - sy * k, hz)
+            k = (0.5 - u) * self.norm_factor
+            return Vec3(hx + sx * k, hy + sy * k, hz)
         u = (phase - self.DUTY) / (1 - self.DUTY)
         k = (u - 0.5) * self.norm_factor
         bulge = leg.orientation * self.swing_bulge * math.sin(math.pi * u)
@@ -56,9 +59,8 @@ class TripodGait:
     def stroke(self, leg : HexLeg, vx, vy, omega):
         T = self.period * self.DUTY      # stance duration
         #hx, hy = leg.home_body_xy         # neutral foot pos, body frame
-        return (-(vx - omega * leg.home_body_pos.y * 0.01)) * T, (-(vy + omega * leg.home_body_pos.x * 0.01)) * T
+        return (vx - omega * leg.home_body_pos.y * 0.01) * T, (vy + omega * leg.home_body_pos.x * 0.01) * T
 
-    
 
     def update(self, dt, legs : list[HexLeg], vx, vy, omega):
         self._t = (self._t + dt / self.period) % 1.0
@@ -78,7 +80,7 @@ class TripodGait:
             factor = self.max_reach / math.sqrt(max_length)
         for leg, command in zip(legs, commands):
             #print("what is that", d)
-            if factor > 1:
+            if factor < 1:
                 command *= factor
             leg.move_leg_aligned(command)
             #leg.move_leg_aligned()

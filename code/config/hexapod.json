@@ -3,7 +3,7 @@
   "FEMUR_LENGTH": 89.5,
   "TIBIA_LENGTH": 154.745,
   "TIBIA_CURVE": -25.255,
-  "POSITION_SCALE" : 100,
+  "POSITION_SCALE": 100,
   "HOME_POS_NORM": [
     40.0,
     0.0,
@@ -25,7 +25,8 @@
         0
       ],
       "COXA": {
-        "id": 18,
+        "id": 27,
+        "sign": -1,
         "rotation_offset": 90,
         "rotation_bounds": [
           -80,
@@ -33,7 +34,8 @@
         ]
       },
       "FEMUR": {
-        "id": 17,
+        "id": 23,
+        "sign": 1,
         "rotation_offset": 90,
         "rotation_bounds": [
           -80,
@@ -41,8 +43,9 @@
         ]
       },
       "TIBIA": {
-        "id": 16,
-        "rotation_offset": 2,
+        "id": 22,
+        "sign": 1,
+        "rotation_offset": -22,
         "rotation_bounds": [
           50,
           165
@@ -58,6 +61,7 @@
       ],
       "COXA": {
         "id": 21,
+        "sign": -1,
         "rotation_offset": 90,
         "rotation_bounds": [
           -80,
@@ -66,6 +70,7 @@
       },
       "FEMUR": {
         "id": 20,
+        "sign": 1,
         "rotation_offset": 90,
         "rotation_bounds": [
           -80,
@@ -74,6 +79,7 @@
       },
       "TIBIA": {
         "id": 19,
+        "sign": 1,
         "rotation_offset": 13,
         "rotation_bounds": [
           50,
@@ -89,7 +95,8 @@
         0
       ],
       "COXA": {
-        "id": 27,
+        "id": 18,
+        "sign": -1,
         "rotation_offset": 90,
         "rotation_bounds": [
           -80,
@@ -97,7 +104,8 @@
         ]
       },
       "FEMUR": {
-        "id": 23,
+        "id": 17,
+        "sign": 1,
         "rotation_offset": 90,
         "rotation_bounds": [
           -80,
@@ -105,8 +113,9 @@
         ]
       },
       "TIBIA": {
-        "id": 22,
-        "rotation_offset": -22,
+        "id": 16,
+        "sign": 1,
+        "rotation_offset": 2,
         "rotation_bounds": [
           50,
           165
@@ -121,7 +130,8 @@
         0
       ],
       "COXA": {
-        "id": 13,
+        "id": 31,
+        "sign": -1,
         "rotation_offset": 90,
         "rotation_bounds": [
           -80,
@@ -129,7 +139,8 @@
         ]
       },
       "FEMUR": {
-        "id": 14,
+        "id": 8,
+        "sign": 1,
         "rotation_offset": 90,
         "rotation_bounds": [
           -80,
@@ -137,7 +148,8 @@
         ]
       },
       "TIBIA": {
-        "id": 15,
+        "id": 9,
+        "sign": 1,
         "rotation_offset": -10,
         "rotation_bounds": [
           50,
@@ -154,6 +166,7 @@
       ],
       "COXA": {
         "id": 10,
+        "sign": -1,
         "rotation_offset": 90,
         "rotation_bounds": [
           -80,
@@ -162,6 +175,7 @@
       },
       "FEMUR": {
         "id": 11,
+        "sign": 1,
         "rotation_offset": 90,
         "rotation_bounds": [
           -80,
@@ -170,6 +184,7 @@
       },
       "TIBIA": {
         "id": 12,
+        "sign": 1,
         "rotation_offset": -5,
         "rotation_bounds": [
           50,
@@ -185,7 +200,8 @@
         0
       ],
       "COXA": {
-        "id": 31,
+        "id": 13,
+        "sign": -1,
         "rotation_offset": 90,
         "rotation_bounds": [
           -80,
@@ -193,7 +209,8 @@
         ]
       },
       "FEMUR": {
-        "id": 8,
+        "id": 14,
+        "sign": 1,
         "rotation_offset": 90,
         "rotation_bounds": [
           -80,
@@ -201,7 +218,8 @@
         ]
       },
       "TIBIA": {
-        "id": 9,
+        "id": 15,
+        "sign": 1,
         "rotation_offset": -10,
         "rotation_bounds": [
           50,
