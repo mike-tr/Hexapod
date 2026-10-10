@@ -2,13 +2,14 @@
 # from Initialization.leg import HexLeg
 from Initialization.pca9685 import PCA9685
 from Initialization.adc import ADC
-from Initialization.hexapodConfig import HexapodConfig
+from Initialization.hexapod import Hexapod
 from Initialization.tripodgait import TripodGait
+from Initialization.vector import Vec3
 import time
 
 # print("Testing remote pi")
 
-robot = HexapodConfig()
+robot = Hexapod()
 
 tripod = TripodGait(2, 50)
 tripod.load_gait(TripodGait.TRIPLE_GAIT)
@@ -31,11 +32,19 @@ try:
         # robot.legL[0].set_angles(0, 0, last)
         # robot.legL[1].set_angles(0, 0, last)
         # robot.legL[2].set_angles(0, 0, last)
-        robot.legR[0].set_angles(0, 80, last)
+        #robot.legR[0].set_angles(0, 30, last)
+        leg = robot.legL[2]
+        leg.set_angles(0, 80, last)
+        #leg.move_leg_body(leg.home_body_pos - Vec3(40,20,-90))
+        print(leg.name, leg._current_pos)
         # robot.legR[1].set_angles(0, 80, last)
         # robot.legR[2].set_angles(0, 80, last)
-        time.sleep(1)
-        
+        time.sleep(4)
+        leg.set_angles(40, 70, last)
+        time.sleep(2)
+        # #leg.move_leg_body(leg.home_body_pos - Vec3(40,100,-90))
+        # print(leg.name, leg._current_pos)
+        # time.sleep(1)
         # robot.legR[0].set_angles(0, 90, last)
         # robot.legR[1].set_angles(0, 30, last)
         # robot.legR[2].set_angles(0, 90, last)

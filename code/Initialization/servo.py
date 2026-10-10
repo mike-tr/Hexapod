@@ -54,6 +54,7 @@ class Servo:
         self.servo_id = data["id"]
         self.limits = data["rotation_bounds"]
         self.offset = data["rotation_offset"]
+        self.sign = data["sign"]
         # self.limits[0] += self.offset
         # self.limits[1] += self.offset
         self._chip, self._channel= controller.get_chip_for_channel(self.servo_id)
@@ -64,7 +65,7 @@ class Servo:
             print(f"ID: {self.servo_id}, Angle {angle} out of range [{self.limits[0]}, {self.limits[1]}]")
             angle = clamp(angle, self.limits[0], self.limits[1])
             print(f"set angle to {angle}")
-        self.current_angle = angle + self.offset
+        self.current_angle = self.sign * angle + self.offset
         duty = self._angle_to_duty(self.current_angle)
         self._chip.set_pwm(self._channel, 0, duty)
     

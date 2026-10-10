@@ -22,7 +22,7 @@ class HexLeg:
     TIBIA = 2
     NUM_JOINTS = 3
 
-    def __init__(self, name, brain : Hexapod, jdata, tibia_curve):
+    def __init__(self, name, robot : Hexapod, jdata, tibia_curve):
         #self.controller : ServoController = controller
         #print(jdata)
         self._current_pos : Vec3
@@ -35,9 +35,9 @@ class HexLeg:
         self._mount_pos : Vec3
         self.home_body_xy : tuple[float, float]
 
-        self.brain = brain
+        self.robot : Hexapod = robot
         self.name = name
-        self._ik : IKSystem3 = brain.iksys
+        self._ik : IKSystem3 = robot.iksys
         self.reload(jdata, tibia_curve)
 
         v = Vec3(40, 0, -30)
@@ -51,8 +51,8 @@ class HexLeg:
         self._rsin = math.sin(math.radians(jdata["mount_angle"]))
         self._rcos = math.cos(math.radians(jdata["mount_angle"]))
 
-        self._local_home = self.brain.HOME_LOCAL
-        self._aligned_home = self.local_to_aligned(self.brain.HOME_LOCAL)
+        self._local_home = self.robot.HOME_LOCAL
+        self._aligned_home = self.local_to_aligned(self.robot.HOME_LOCAL)
 
         self.orientation = 1
         if(math.fabs(jdata["mount_angle"]) > 90):
@@ -62,14 +62,13 @@ class HexLeg:
         # self.home_body_xy = (self._aligned_home[0] + self._mount_pos[0],
         #         self._aligned_home[1] + self._mount_pos[1])
 
-
         self.servos: list[Servo] = []
         for servo in Config.JOINTS:
             if servo == "TIBIA":
                 #print("before : ", jdata[servo]["rotation_offset"])
                 jdata[servo]["rotation_offset"] += tibia_curve
                 #print("after : ", jdata[servo]["rotation_offset"])
-            self.servos.append(Servo(self.brain.controller, jdata[servo]))
+            self.servos.append(Servo(self.robot.controller, jdata[servo]))
 
 
     # Named property access — enables readable individual joint access
@@ -87,10 +86,14 @@ class HexLeg:
 
     @property
     def home_body_pos(self) -> Vec3:
-        return self.local_to_body(self._local_home)
+        return self.local_to_body(self._local_home - self.robot.height_offset)
+
+    @property
+    def aligned_home(self) -> Vec3:
+        return self._aligned_home - self.robot.height_offset
 
     def home(self):
-        self.move_leg(self._local_home)
+        self.move_leg(self._local_home - self.robot.height_offset)
 
     def local_to_aligned(self, pos : Vec3):
         """transforms position in local space to position in aligned space (i.e. centred around leg, but axes aligned with body)"""
