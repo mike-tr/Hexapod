@@ -19,10 +19,10 @@ while True:
     for i in range(js.get_numaxes()):
         print(i, round(js.get_axis(i), 2))
     msg = {
-        "lx":    -deadzone(js.get_axis(0)),
-        "ly":     deadzone(js.get_axis(1)),
+        "lx":    -deadzone(-js.get_axis(0)),
+        "ly":     deadzone(-js.get_axis(1)),
         "rx":  deadzone(js.get_axis(2)),
-        "ry":  deadzone(js.get_axis(3)),
+        "ry":  deadzone(-js.get_axis(3)),
         "hx": hx,
         "hy": hy,
         "rt":  deadzone(js.get_axis(5))

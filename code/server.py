@@ -61,7 +61,7 @@ while True:
         if cmd["hy"] == -1 and counter % 20:
             SPEED -= 0.01
     else:
-        robot.move_body(Vec3(cmd["lx"], cmd["ly"], 0) * Strength, 0, cmd["ry"] * Angle, cmd["rx"] * Angle)
+        robot.move_body(Vec3(cmd["lx"], cmd["ly"], 0) * Strength, 0, cmd["rx"] * Angle, cmd["ry"] * Angle)
         if abs(cmd["hy"]) == 1:
             Strength += 3 * dt * cmd["hy"]
         if abs(cmd["hx"]) == 1:
