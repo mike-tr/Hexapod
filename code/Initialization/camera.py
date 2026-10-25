@@ -2,13 +2,14 @@ import socket, struct, cv2
 from picamera2 import Picamera2
 import numpy as np
 from numpy.typing import NDArray
+from libcamera import Transform
 import threading
 
 class CameraCapture:
     def __init__(self, resoltion):
         self.picam2 = Picamera2()
         self.picam2.configure(self.picam2.create_video_configuration(
-                main={"size": resoltion, "format": "RGB888"}))
+                main={"size": resoltion, "format": "RGB888"}, transform=Transform(hflip=1, vflip=1)))
         self.picam2.start()
 
     def get_frame(self) -> NDArray[np.uint8]:
@@ -23,7 +24,7 @@ class FrameSender:
         self.quality = quality
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.frame_id = 0
-        self.cam = CameraCapture()
+        self.cam = CameraCapture((1280,720))
         self._stop = threading.Event()
         self._thread = threading.Thread(target=self._run, daemon=True)
 
@@ -60,6 +61,8 @@ class FrameReceiver:
         self.pending = {}
         self.post_processing = post_processing
         self.max_pending = max_pending
+        self.lastframe = -1
+        self.frame: NDArray[np.uint8] | None = None
         self._stop = threading.Event()
         self._thread = threading.Thread(target=self._run, daemon=True)
 
@@ -68,24 +71,31 @@ class FrameReceiver:
 
     def _run(self):
         while not self._stop.is_set():
-            self.recv()
+            self.frame = self.recv()
+        print("camera down")
 
     def stop(self):
         self._stop.set()
         self._thread.join(timeout=2.0)
+        
 
-    def recv(self) -> NDArray[np.uint8]:
+    def recv(self) -> NDArray[np.uint8] | None:
         """Block until a complete frame arrives, then return it."""
-        while True:
+        while not self._stop.is_set():
             pkt, _ = self.sock.recvfrom(2048)
             fid, idx, total = HDR.unpack_from(pkt)
+            if fid <= self.lastframe:
+                continue
 
             chunks = self.pending.setdefault(fid, {})
             chunks[idx] = pkt[HDR.size:]
 
             if len(chunks) == total:
                 data = b"".join(chunks[i] for i in range(total))
-                del self.pending[fid]
+                for id in list(self.pending.keys()):
+                    if id <= self.lastframe:
+                        del self.pending[id]
+                #del self.pending[fid]
                 img = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
                 if img is not None:
                     return self.post_processing(img)

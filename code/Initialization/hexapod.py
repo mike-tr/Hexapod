@@ -80,7 +80,7 @@ class Hexapod:
         """
         for leg in self.legs:
             p : Vec3 = leg.home_body_pos - pose - self.height_offset
-            print(p)
+            #print(p)
             leg.move_leg_body(p.rotate_inv(yaw_deg, roll_deg, -pitch_deg))
 
     # def moveLegAngle(self, right: bool, id: int, coxa_angle, femur_angle, tibia_angle):

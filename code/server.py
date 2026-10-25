@@ -76,9 +76,9 @@ while True:
             Angle += 3 * dt * cmd["hx"]
 
 
-    # if counter % 100:
-    #     print(cmd)
-    #     print(SPEED, Strength, Angle)
+    if counter % 100:
+        print(cmd)
+        print(SPEED, Strength, Angle)
     counter += 1
     brain.update(dt * SPEED)
     # if current_command == "w":

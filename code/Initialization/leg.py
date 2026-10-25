@@ -43,7 +43,7 @@ class HexLeg:
         v = Vec3(40, 0, -30)
         r = self.body_to_local(self.local_to_body(v))
         assert all(abs(a - b) < 1e-9 for a, b in zip(r, v)), f"{self.name}: frame round-trip failed"
-        print(self.name, self.local_to_body(Vec3(40, 0, -30)))
+        #print(self.name, self.local_to_body(Vec3(40, 0, -30)))
 
     def reload(self, jdata, tibia_curve):
         self._current_pos = Vec3(0, 0, 0)
