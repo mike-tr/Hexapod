@@ -21,8 +21,8 @@ HDR = struct.Struct("!IHH")       # frame_id, chunk_index, total_chunks
 class FrameSender:
     def __init__(self, host = "0.0.0.0", port=9001, quality=80):
         self.addr = (host, port)
-        self.quality = quality
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.quality = quality
         self.frame_id = 0
         self.cam = CameraCapture((1280,720))
         self._stop = threading.Event()
@@ -35,6 +35,7 @@ class FrameSender:
     def _run(self):
         while not self._stop.is_set():
             self.send(self.cam.get_frame())
+        print("camera down")
 
     def stop(self):
         self._stop.set()
