@@ -3,9 +3,10 @@ from picamera2 import Picamera2
 import numpy as np
 from numpy.typing import NDArray
 from libcamera import Transform
-import threading
+import threading, sys, os
 
-from paths import CALIB
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from path import CALIB
 CALIB.mkdir(exist_ok=True)
 
 class CameraCapture:
@@ -20,6 +21,7 @@ class CameraCapture:
 
     def save_frame(self, name, id):
         cv2.imwrite(str(CALIB / f"{name}_{id:02d}.jpg" ), self.picam2.capture_array(), [cv2.IMWRITE_JPEG_QUALITY, 95])
+        print("saved:", f"{name}_{id:02d}.jpg")
 
 CHUNK = 1400
 HDR = struct.Struct("!IHH")       # frame_id, chunk_index, total_chunks

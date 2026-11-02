@@ -23,12 +23,13 @@ def cpu_temp() -> float:
     with open("/sys/class/thermal/thermal_zone0/temp") as f:
         return int(f.read()) / 1000.0
 
-cmd_initial = {"lx": 0.0, "ly": 0.0, "rx": 0.0, "ry" : 0.0, "hx": 0.0, "hy": 0.0, "rt": -1.0, "shoot": False}
-cmd = cmd_initial.copy()
 
-id = 0
 def main():
+    last_rx = time.time()
     sender.start()
+    cmd_initial = {"lx": 0.0, "ly": 0.0, "rx": 0.0, "ry" : 0.0, "hx": 0.0, "hy": 0.0, "rt": -1.0, "shoot": False}
+    cmd = cmd_initial.copy()
+    id = 0
     try:
         while not stop.is_set():
             while True:
@@ -41,12 +42,16 @@ def main():
                     last_rx = time.time()
                 except json.JSONDecodeError:
                     pass
-        if time.time() - last_rx > WATCHDOG:
-            cmd = cmd_initial.copy()
+            if time.time() - last_rx > WATCHDOG:
+                cmd = cmd_initial.copy()
 
-        if cmd["shoot"]:
-            camera.save_frame("test", id)
-            id += 1
+
+            if cmd["shoot"]:
+                camera.save_frame("test", id)
+                id += 1
+
+            print(cmd)
+            time.sleep(1 / 50)
 
     except KeyboardInterrupt:
         pass
