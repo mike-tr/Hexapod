@@ -5,6 +5,9 @@ from numpy.typing import NDArray
 from libcamera import Transform
 import threading
 
+from paths import CALIB
+CALIB.mkdir(exist_ok=True)
+
 class CameraCapture:
     def __init__(self, resoltion):
         self.picam2 = Picamera2()
@@ -15,16 +18,19 @@ class CameraCapture:
     def get_frame(self) -> NDArray[np.uint8]:
         return self.picam2.capture_array()
 
+    def save_frame(self, name, id):
+        cv2.imwrite(str(CALIB / f"{name}_{id:02d}.jpg" ), self.picam2.capture_array(), [cv2.IMWRITE_JPEG_QUALITY, 95])
+
 CHUNK = 1400
 HDR = struct.Struct("!IHH")       # frame_id, chunk_index, total_chunks
 
 class FrameSender:
-    def __init__(self, host = "0.0.0.0", port=9001, quality=80):
+    def __init__(self, camera : CameraCapture, host = "0.0.0.0", port=9001, quality=80):
         self.addr = (host, port)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.quality = quality
         self.frame_id = 0
-        self.cam = CameraCapture((1280,720))
+        self.cam = camera
         self._stop = threading.Event()
         self._thread = threading.Thread(target=self._run, daemon=True)
 
