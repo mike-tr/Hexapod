@@ -1,6 +1,6 @@
-from Initialization.hexapod import Hexapod
-from Initialization.tripodgait import TripodGait
-from Initialization.vector import Vec3
+from initialization.hexapod import Hexapod
+from initialization.tripodgait import TripodGait
+from initialization.vector import Vec3
 
 class HexapodBrain:
     def __init__(self, robot : Hexapod):

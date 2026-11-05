@@ -6,6 +6,10 @@ from initialization.hexapod import Hexapod
 from initialization.tripodgait import TripodGait
 from initialization.vector import Vec3
 from initialization.hexapodBrain import HexapodBrain
+from initialization.camera import FrameSender,CameraCapture
+
+camera =  CameraCapture((1280,720))
+sender = FrameSender(camera, "192.168.10.19")
 
 PORT = 9000
 WATCHDOG = 0.5  # seconds without a packet -> stop
@@ -28,6 +32,12 @@ Strength = 20
 Angle = 5
 Height = 0
 
+def cpu_temp() -> float:
+    with open("/sys/class/thermal/thermal_zone0/temp") as f:
+        return int(f.read()) / 1000.0
+
+
+sender.start()
 while True:
     # drain the queue, keep only the newest packet
     while True:

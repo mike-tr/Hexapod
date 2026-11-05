@@ -4,7 +4,7 @@ from pathlib import Path
 from initialization.path import CALIB
 
 PATTERN   = (6, 9)                   # inner corners
-SQUARE_MM = 23.5
+SQUARE_MM = 25
 
 CALIB_IMAGES = CALIB / "images" 
 
