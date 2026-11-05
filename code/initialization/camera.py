@@ -2,8 +2,9 @@ import socket, struct, cv2
 from picamera2 import Picamera2
 import numpy as np
 from numpy.typing import NDArray
-from libcamera import Transform
+from libcamera import Transform, controls
 import threading, sys, os
+import time
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from path import CALIB
@@ -22,6 +23,34 @@ class CameraCapture:
     def save_frame(self, name, id):
         cv2.imwrite(str(CALIB / f"{name}_{id:02d}.jpg" ), self.picam2.capture_array(), [cv2.IMWRITE_JPEG_QUALITY, 95])
         print("saved:", f"{name}_{id:02d}.jpg")
+
+    def measure_and_lock(self, lens_position=1.5, settle=2.5):
+        """Let auto-exposure and AWB converge, then freeze what they chose."""
+        self.picam2.set_controls({
+            "AeEnable": True,
+            "AwbEnable": True,
+            "AfMode": controls.AfModeEnum.Manual,
+            "LensPosition": lens_position,
+            "Sharpness": 0.0,
+        })
+        time.sleep(settle)
+
+        md = self.picam2.capture_metadata()
+        locked = {
+            "ExposureTime": int(md["ExposureTime"]),
+            "AnalogueGain": float(md["AnalogueGain"]),
+            "ColourGains": tuple(float(g) for g in md["ColourGains"]),
+            "LensPosition": lens_position,
+            "Sharpness": 0.0,
+        }
+
+        self.picam2.set_controls({
+            "AeEnable": False,
+            "AwbEnable": False,
+            **locked,
+        })
+        time.sleep(0.5)
+        return locked
 
 CHUNK = 1400
 HDR = struct.Struct("!IHH")       # frame_id, chunk_index, total_chunks

@@ -2,7 +2,8 @@ import picamera2, cv2
 import socket, json
 print(cv2.__version__, hasattr(cv2, "aruco"))
 import time
-from Initialization.camera import FrameSender,CameraCapture
+from initialization.camera import FrameSender,CameraCapture
+from libcamera import controls
 
 camera =  CameraCapture((1280,720))
 sender = FrameSender(camera, "192.168.10.19")
@@ -25,6 +26,8 @@ def cpu_temp() -> float:
 
 
 def main():
+    print(camera.measure_and_lock())    
+
     last_rx = time.time()
     sender.start()
     cmd_initial = {"lx": 0.0, "ly": 0.0, "rx": 0.0, "ry" : 0.0, "hx": 0.0, "hy": 0.0, "rt": -1.0, "shoot": False}

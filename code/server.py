@@ -1,11 +1,11 @@
 import socket, json, time
-from Initialization.servo import Servo
-from Initialization.pca9685 import PCA9685
-from Initialization.adc import ADC
-from Initialization.hexapod import Hexapod
-from Initialization.tripodgait import TripodGait
-from Initialization.vector import Vec3
-from Initialization.hexapodBrain import HexapodBrain
+from initialization.servo import Servo
+from initialization.pca9685 import PCA9685
+from initialization.adc import ADC
+from initialization.hexapod import Hexapod
+from initialization.tripodgait import TripodGait
+from initialization.vector import Vec3
+from initialization.hexapodBrain import HexapodBrain
 
 PORT = 9000
 WATCHDOG = 0.5  # seconds without a packet -> stop
