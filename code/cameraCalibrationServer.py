@@ -3,7 +3,6 @@ import socket, json
 print(cv2.__version__, hasattr(cv2, "aruco"))
 import time
 from initialization.camera import FrameSender,CameraCapture
-from libcamera import controls
 
 camera =  CameraCapture((1280,720))
 sender = FrameSender(camera, "192.168.10.19")
@@ -50,7 +49,7 @@ def main():
 
 
             if cmd["shoot"]:
-                camera.save_frame("test", id)
+                camera.save_frame("calib", id)
                 id += 1
 
             print(cmd)

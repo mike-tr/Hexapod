@@ -18,7 +18,8 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("0.0.0.0", PORT))
 sock.setblocking(False)
 
-cmd = {"lx": 0.0, "ly": 0.0, "rx": 0.0, "ry" : 0.0, "hx": 0.0, "hy": 0.0, "rt": -1.0}
+cmd_initial = {"lx": 0.0, "ly": 0.0, "rx": 0.0, "ry" : 0.0, "hx": 0.0, "hy": 0.0, "rt": -1.0, "shoot": False}
+cmd = cmd_initial.copy()
 last_rx = time.time()
 
 robot = Hexapod()
@@ -37,6 +38,7 @@ def cpu_temp() -> float:
         return int(f.read()) / 1000.0
 
 
+id = 0
 sender.start()
 while True:
     # drain the queue, keep only the newest packet
@@ -52,26 +54,15 @@ while True:
             pass
 
     if time.time() - last_rx > WATCHDOG:
-        cmd = {"lx": 0.0, "ly": 0.0, "rx": 0.0, "ry" : 0.0, "hx": 0.0, "hy": 0.0, "rt": -1.0}
+        cmd = cmd_initial.copy()
 
-    #hexapod.set_velocity(cmd["vx"], cmd["vy"], cmd["omega"])
-    #hexapod.gait_tick()
     dt = time.monotonic() - prev
     prev = time.monotonic()
     
-    # if abs(cmd["vx"]) > 0:
-    #     tripod.update(dt * SPEED, robot.legs, 50 * cmd["vx"])
 
     if cmd["rt"] < 0.5:
-        # if abs(cmd["lx"]) > 0 or abs(cmd["ly"]) > 0 or abs(cmd["rx"]) > 0:
-        #     robot.tripod.update(dt * SPEED, robot.legs, 35 * cmd["rx"], 50 * cmd["ly"], cmd["lx"] * 25)
-        # else:
-        #     robot.tripod.reset()
-        #     robot.home()
-
         brain.set_velocities(35 * cmd["rx"], 50 * cmd["ly"], cmd["lx"] * 25)
         brain.set_offset((0,0,0), 0,0,0)
-        #brain.set_offset((0,0,0), 0,0,0)
         if abs(cmd["hy"]) == 1:
             Height += 3 * dt * cmd["hy"]
             robot.set_height(Height)
@@ -84,6 +75,11 @@ while True:
             Strength += 3 * dt * cmd["hy"]
         if abs(cmd["hx"]) == 1:
             Angle += 3 * dt * cmd["hx"]
+
+    if cmd["shoot"]:
+        camera.save_frame("floor", id)
+        id += 1
+
 
 
     if counter % 100:
