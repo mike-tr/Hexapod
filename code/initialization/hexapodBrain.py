@@ -30,3 +30,6 @@ class HexapodBrain:
         self.yaw = yaw
         self.pitch = pitch
         self.roll = roll
+
+    def stop(self):
+        self.robot.relax()

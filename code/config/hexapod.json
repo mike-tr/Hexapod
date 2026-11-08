@@ -10,9 +10,9 @@
     -30.0
   ],
   "HOME_RELAXED_NORM": [
-    70.0,
+    60.0,
     0.0,
-    -5.0
+    15.0
   ],
   "_note1": "rotation_bounds are servo-command degrees, applied after rotation_offset. ",
   "_note2": "mount position, is the position the legs sits in relative to boudy (0,0) coordinate whichever you choose it to be.",

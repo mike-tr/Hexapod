@@ -18,7 +18,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(("0.0.0.0", PORT))
 sock.setblocking(False)
 
-cmd_initial = {"lx": 0.0, "ly": 0.0, "rx": 0.0, "ry" : 0.0, "hx": 0.0, "hy": 0.0, "rt": -1.0, "shoot": False}
+cmd_initial = {"lx": 0.0, "ly": 0.0, "rx": 0.0, "ry" : 0.0, "hx": 0.0, "hy": 0.0, "rt": -1.0, "shoot": False, "stop": False}
 cmd = cmd_initial.copy()
 last_rx = time.time()
 
@@ -87,6 +87,11 @@ while True:
         print(SPEED, Strength, Angle)
     counter += 1
     brain.update(dt * SPEED)
+
+    if cmd["stop"]:
+        brain.stop()
+        sender.stop()
+        break
     # if current_command == "w":
     #     tripod.update(dt * SPEED, robot.legs, 50)
     #     time.sleep(DT)
@@ -95,3 +100,6 @@ while True:
     # else:
     #     robot.home()
     time.sleep(1 / 50)
+
+
+print("robot is asleep...")

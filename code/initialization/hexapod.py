@@ -64,6 +64,17 @@ class Hexapod:
             leg.set_angles(0, 0, 90)
 
     def relax(self):
+        d = 1/60
+        t = 0
+        while(t < 1):
+            p = self.HOME_RELAXED * t + self.HOME_LOCAL * (1 - t)
+            for leg in self.legs:
+                leg.move_leg(p)
+
+            t += d
+            time.sleep(d)
+        
+
         for leg in self.legs:
             leg.relax()
 
@@ -72,6 +83,7 @@ class Hexapod:
 
     def set_height(self, height):
         self.height_offset = Vec3(0, 0, height)
+
 
     def move_body(self, pose : Vec3, yaw_deg, roll_deg, pitch_deg):
         """
