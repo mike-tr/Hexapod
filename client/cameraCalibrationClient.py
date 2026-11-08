@@ -21,6 +21,7 @@ def deadzone(v, t=0.12):
     return 0.0 if abs(v) < t else (v - t * (1 if v > 0 else -1)) / (1 - t)
 
 running = True
+reciever.start()
 while running:
     shoot = False
     for e in pygame.event.get():
@@ -44,6 +45,7 @@ while running:
         "shoot": shoot
     }
     sock.sendto(json.dumps(msg).encode(), ROBOT)
+    print(msg)
 
     frame = reciever.frame
     if frame is not None:
