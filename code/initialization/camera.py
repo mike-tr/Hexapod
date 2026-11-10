@@ -7,8 +7,8 @@ import threading, sys, os
 import time
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from path import CALIB
-CALIB.mkdir(exist_ok=True)
+from path import IMAGES
+IMAGES.mkdir(exist_ok=True)
 
 class CameraCapture:
     def __init__(self, resoltion):
@@ -21,7 +21,7 @@ class CameraCapture:
         return self.picam2.capture_array()
 
     def save_frame(self, name, id):
-        cv2.imwrite(str(CALIB / f"{name}_{id:02d}.jpg" ), self.picam2.capture_array(), [cv2.IMWRITE_JPEG_QUALITY, 95])
+        cv2.imwrite(str(IMAGES / f"{name}_{id:02d}.jpg" ), self.picam2.capture_array(), [cv2.IMWRITE_JPEG_QUALITY, 95])
         print("saved:", f"{name}_{id:02d}.jpg")
 
     def measure_and_lock(self, lens_position=1.5, settle=2.5):

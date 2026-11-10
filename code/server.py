@@ -77,7 +77,7 @@ while True:
             Angle += 3 * dt * cmd["hx"]
 
     if cmd["shoot"]:
-        camera.save_frame("floor_chess", id)
+        camera.save_frame("birdseye", id)
         id += 1
 
 
