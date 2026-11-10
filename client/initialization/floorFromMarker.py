@@ -24,18 +24,19 @@ def camera_pose_from_marker(frame):
     if ids is None:
         return None
 
-    _, rvec, tvec = cv2.solvePnP(objp, corners[0][0], K, dist,
-                                 flags=cv2.SOLVEPNP_IPPE_SQUARE)
+    out = []
+    for c, mid in zip(corners, ids.ravel()):
+        ok, rvec, tvec = cv2.solvePnP(objp, c[0], K, dist,
+                                      flags=cv2.SOLVEPNP_IPPE_SQUARE)
+        if not ok:
+            continue
+        R, _ = cv2.Rodrigues(rvec)
+        R_cam = R.T
+        cam_pos = (-R_cam @ tvec).ravel()
+        flip = -1.0 if cam_pos[2] < 0 else 1.0
+        height = flip * float(cam_pos[2])
+        axis = R_cam @ np.array([0.0, 0.0, 1.0])
+        tilt = float(np.degrees(np.arcsin(np.clip(-flip*axis[2], -1, 1))))
+        out.append((int(mid), height, tilt, float(np.linalg.norm(tvec))))
 
-    R, _ = cv2.Rodrigues(rvec)        # 3x3, marker frame -> camera frame
-    R_cam = R.T                       # camera orientation in marker frame
-    cam_pos = (-R_cam @ tvec).ravel() # camera position in marker frame
-
-    height = float(cam_pos[2])        # marker lies on the floor, so this is
-                                      # the camera's height above it
-
-    # where the optical axis points, relative to the floor
-    axis = R_cam @ np.array([0.0, 0.0, 1.0])
-    tilt = float(np.degrees(np.arcsin(-axis[2])))
-
-    return height, tilt, int(ids.ravel()[0])
+    return out

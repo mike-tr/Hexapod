@@ -2,25 +2,47 @@ import cv2, numpy as np
 from pathlib import Path
 from initialization.floorFromMarker import camera_pose_from_marker
 from initialization.floorFromCheckerBoard import camera_pose_from_cheker_board
-from initialization.path import CALIB
+from initialization.path import IMAGES
 
 fc = camera_pose_from_cheker_board
 
 heights, tilts = [], []
-for f in sorted(CALIB.glob("floor_*.jpg")):
+for f in sorted(IMAGES.glob("marker_*.jpg")):
     img = cv2.imread(str(f))
+    print(f.name)
     if img is None:
         print(f"{f.name}: unreadable")
         continue
-    r = fc(img)
-    if r is None:
+    res = camera_pose_from_marker(img)
+    if res is None:
         print(f"{f.name}: no marker found")
         continue
-    h, t, mid = r
-    heights.append(h)
-    tilts.append(t)
-    print(f"{f.name}: id {mid}   height {h:7.1f} mm   tilt {t:6.2f}°")
+    for mid, h,t,d in res:
+        heights.append(h)
+        tilts.append(t)
+        print(f"    id{mid}  h {h:6.1f}  tilt {t:5.2f}  range {d/10:5.1f} cm")
 
 if heights:
     print(f"\nmean height {np.mean(heights):.1f} mm  (spread {np.ptp(heights):.1f})")
     print(f"mean tilt   {np.mean(tilts):.2f}°  (spread {np.ptp(tilts):.2f})")
+
+
+# heights, tilts = [], []
+# for f in sorted(IMAGES.glob("fchess2_*.jpg")):
+#     img = cv2.imread(str(f))
+#     print(f.name)
+#     if img is None:
+#         print(f"{f.name}: unreadable")
+#         continue
+#     r = camera_pose_from_cheker_board(img)
+#     if r is None:
+#         print(f"{f.name}: no marker found")
+#         continue
+#     h, t = r
+#     heights.append(h)
+#     tilts.append(t)
+#     print(f"{f.name}: height {h:7.1f} mm   tilt {t:6.2f}°")
+
+# if heights:
+#     print(f"\nmean height {np.mean(heights):.1f} mm  (spread {np.ptp(heights):.1f})")
+#     print(f"mean tilt   {np.mean(tilts):.2f}°  (spread {np.ptp(tilts):.2f})")

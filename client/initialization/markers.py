@@ -24,7 +24,7 @@ detector = cv2.aruco.ArucoDetector(adict, cv2.aruco.DetectorParameters())
 def annotate(frame):
     corners, ids, _ = detector.detectMarkers(frame)
     if ids is None:
-        return annotate_cheker(frame)
+        return frame
 
     cv2.aruco.drawDetectedMarkers(frame, corners, ids)
     for c, mid in zip(corners, ids.ravel()):
