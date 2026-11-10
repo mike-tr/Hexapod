@@ -18,10 +18,12 @@ reciever = FrameReceiver()
 ROBOT = ("192.168.10.21", 9000)   # your Pi's IP
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+
 def deadzone(v, t=0.12):
     return 0.0 if abs(v) < t else (v - t * (1 if v > 0 else -1)) / (1 - t)
 
 running = True
+stop = False
 reciever.start()
 while running:
     shoot = False
@@ -33,6 +35,7 @@ while running:
                 shoot = True
             elif e.key == pygame.K_ESCAPE:
                 running = False
+                stop = True
 
     hx, hy = js.get_hat(0)
     msg = {
@@ -44,17 +47,17 @@ while running:
         "hy": hy,
         "rt":  deadzone(js.get_axis(5)),
         "shoot": shoot,
-        "stop" : not running
+        "stop" : stop
     }
     sock.sendto(json.dumps(msg).encode(), ROBOT)
     #print(msg)
-
     frame = reciever.frame
     if frame is not None:
         rgb = cv2.cvtColor(annotate(reciever.frame), cv2.COLOR_BGR2RGB)
         pygame.surfarray.blit_array(surf, rgb.swapaxes(0, 1))
         screen.blit(surf, (0, 0))
-
+    # else:
+    #     print("no frame")
     pygame.display.flip()
     clock.tick(50)
 

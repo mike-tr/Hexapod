@@ -1,7 +1,10 @@
 import cv2, numpy as np
 from pathlib import Path
 from initialization.floorFromMarker import camera_pose_from_marker
+from initialization.floorFromCheckerBoard import camera_pose_from_cheker_board
 from initialization.path import CALIB
+
+fc = camera_pose_from_cheker_board
 
 heights, tilts = [], []
 for f in sorted(CALIB.glob("floor_*.jpg")):
@@ -9,7 +12,7 @@ for f in sorted(CALIB.glob("floor_*.jpg")):
     if img is None:
         print(f"{f.name}: unreadable")
         continue
-    r = camera_pose_from_marker(img)
+    r = fc(img)
     if r is None:
         print(f"{f.name}: no marker found")
         continue

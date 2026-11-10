@@ -42,7 +42,8 @@ while running:
         "hx": hx,
         "hy": hy,
         "rt":  deadzone(js.get_axis(5)),
-        "shoot": shoot
+        "shoot": shoot,
+        "stop": False
     }
     sock.sendto(json.dumps(msg).encode(), ROBOT)
     print(msg)
