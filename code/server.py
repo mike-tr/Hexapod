@@ -9,7 +9,7 @@ from initialization.hexapodBrain import HexapodBrain
 from initialization.camera import FrameSender,CameraCapture
 
 camera =  CameraCapture((1280,720))
-sender = FrameSender(camera, "192.168.10.19")
+sender = FrameSender(camera, "192.168.10.20")
 
 PORT = 9000
 WATCHDOG = 0.5  # seconds without a packet -> stop
@@ -77,7 +77,7 @@ while True:
             Angle += 3 * dt * cmd["hx"]
 
     if cmd["shoot"]:
-        camera.save_frame("floor", id)
+        camera.save_frame("floor_chess", id)
         id += 1
 
 
