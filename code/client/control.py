@@ -1,0 +1,73 @@
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+print("path root:", Path(__file__).resolve().parents[1])
+
+import pygame, json, socket, cv2
+from client.lib.camera_reciever import FrameReceiver
+from client.lib.markers import annotate
+
+pygame.init()
+pygame.joystick.init()
+js = pygame.joystick.Joystick(0)
+
+W, H = 1280, 720
+screen = pygame.display.set_mode((W, H))
+pygame.display.set_caption("hexapod")
+surf = pygame.Surface((W, H))
+clock = pygame.time.Clock()
+
+
+reciever = FrameReceiver()
+
+ROBOT = ("192.168.10.21", 9000)   # your Pi's IP
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+
+SAVENAME = "temp.jpg"
+
+def deadzone(v, t=0.12):
+    return 0.0 if abs(v) < t else (v - t * (1 if v > 0 else -1)) / (1 - t)
+
+running = True
+stop = False
+reciever.start()
+shoot = None
+while running:
+    for e in pygame.event.get():
+        if e.type == pygame.QUIT:
+            running = False
+        elif e.type == pygame.KEYDOWN:
+            if e.key == pygame.K_SPACE:
+                shoot = SAVENAME
+            elif e.key == pygame.K_ESCAPE:
+                running = False
+                stop = True
+
+    hx, hy = js.get_hat(0)
+    msg = {
+        "lx": -deadzone(-js.get_axis(0)),
+        "ly":  deadzone(-js.get_axis(1)),
+        "rx":  deadzone(js.get_axis(2)),
+        "ry":  deadzone(-js.get_axis(3)),
+        "hx": hx,
+        "hy": hy,
+        "rt":  deadzone(js.get_axis(5)),
+        "shoot": shoot,
+        "stop" : stop
+    }
+    sock.sendto(json.dumps(msg).encode(), ROBOT)
+    print(msg)
+    frame = reciever.frame
+    if frame is not None:
+        rgb = cv2.cvtColor(annotate(reciever.frame), cv2.COLOR_BGR2RGB)
+        pygame.surfarray.blit_array(surf, rgb.swapaxes(0, 1))
+        screen.blit(surf, (0, 0))
+    # else:
+    #     print("no frame")
+    shoot = None
+    pygame.display.flip()
+    clock.tick(50)
+
+pygame.quit()
