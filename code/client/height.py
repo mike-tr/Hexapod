@@ -1,3 +1,7 @@
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 import cv2, numpy as np
 from pathlib import Path
 from client.lib.floor_chess import camera_pose_from_marker

@@ -1,0 +1,20 @@
+{
+  "profile": "stream",
+  "capture": {
+    "size": [2304, 1296],
+    "raw_size": [2304, 1296],
+    "lores": [1270, 720],
+    "format": "RGB888",
+    "format_lores": "RGB888",
+    "hflip": false,
+    "vflip": false
+  },
+  "intrinsics": {
+    "K": [[518.0, 0.0, 639.5], [0.0, 518.0, 359.5], [0.0, 0.0, 1.0]],
+    "dist": [0.0, 0.0, 0.0, 0.0, 0.0],
+    "rms_px": null,
+    "n_images": 0,
+    "square_mm": 23.5,
+    "calibrated_utc": null
+  }
+}

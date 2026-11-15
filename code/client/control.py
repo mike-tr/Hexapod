@@ -25,7 +25,7 @@ ROBOT = ("192.168.10.21", 9000)   # your Pi's IP
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 
-SAVENAME = "temp.jpg"
+SAVENAME = "temp"
 
 def deadzone(v, t=0.12):
     return 0.0 if abs(v) < t else (v - t * (1 if v > 0 else -1)) / (1 - t)
@@ -54,7 +54,7 @@ while running:
         "hx": hx,
         "hy": hy,
         "rt":  deadzone(js.get_axis(5)),
-        "shoot": shoot,
+        "save": shoot,
         "stop" : stop
     }
     sock.sendto(json.dumps(msg).encode(), ROBOT)

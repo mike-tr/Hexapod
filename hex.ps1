@@ -6,7 +6,7 @@ $ROOT = "~/Hexapod"
 switch ($cmd) {
     "sync"     { scp -r "${PI}:${ROOT}/calibration/images" ./calibration/ }
     "push"     { scp ./calibration/camera_calib.npz "${PI}:${ROOT}/calibration/" }
-    "shutdown" { ssh $PI "sudo shutdown -h now" }
+    "shutdown" { ssh $PI "sudo shutdown now" }
     "reboot"   { ssh $PI "sudo reboot" }
     "temp"     { ssh $PI "vcgencmd measure_temp; vcgencmd get_throttled" }
     "server"   { ssh $PI "cd $ROOT && hexapod/bin/python code/server.py" }

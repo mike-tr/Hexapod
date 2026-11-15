@@ -4,12 +4,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import cv2, glob, json
 import numpy as np
-from common.paths import DATA
+from common.paths import IMAGES
 
 PATTERN   = (6, 9)                   # inner corners
 SQUARE_MM = 25
 
-CALIB_IMAGES = DATA / "images" 
+CALIB_IMAGES = IMAGES
+NAME = "test"
 
 print(CALIB_IMAGES)
 

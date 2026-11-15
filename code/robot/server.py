@@ -5,12 +5,17 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import socket, json, time
 from robot.lib.hexapod import Hexapod
 from robot.lib.brain import HexapodBrain
-from robot.lib.camera import FrameSender,CameraCapture
+from robot.lib.camera import CameraCapture
+from robot.lib.frameSender import FrameSender
+from common.camera_calibration import load_profile, CameraProfile
+
 
 from common.vector import Vec3
 
-camera =  CameraCapture((1280,720))
-sender = FrameSender(camera, "192.168.10.20")
+
+profile = load_profile("stream")
+camera =  CameraCapture(profile=profile)
+sender = FrameSender(camera.get_preview, "192.168.10.20")
 
 PORT = 9000
 WATCHDOG = 0.5  # seconds without a packet -> stop
