@@ -3,7 +3,7 @@
   "capture": {
     "size": [2304, 1296],
     "raw_size": [2304, 1296],
-    "lores": [1270, 720],
+    "lores": [1280, 720],
     "format": "RGB888",
     "format_lores": "RGB888",
     "hflip": false,

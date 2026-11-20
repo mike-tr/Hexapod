@@ -5,11 +5,13 @@ print("test")
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 # from common.paths import CALIB
-from common.camera_calibration import K, DIST
+from common.camera_calibration import CameraProfile, load_profile
 
 # print("test", CALIB / "camera_calib.npz")
 # d = np.load(CALIB / "camera_calib.npz")
 # K, DIST = d["K"], d["DIST"]
+
+profile = load_profile("stream")
 
 MARKER_MM = 140.3          # measure your printed black square
 half = MARKER_MM / 2
@@ -29,11 +31,11 @@ def annotate(frame):
 
     cv2.aruco.drawDetectedMarkers(frame, corners, ids)
     for c, mid in zip(corners, ids.ravel()):
-        ok, rvec, tvec = cv2.solvePnP(objp, c[0], K, DIST,
+        ok, rvec, tvec = cv2.solvePnP(objp, c[0], profile.intrinsics.K, profile.intrinsics.dist,
                                       flags=cv2.SOLVEPNP_IPPE_SQUARE)
         if not ok:
             continue
-        cv2.drawFrameAxes(frame, K, DIST, rvec, tvec, MARKER_MM / 2)
+        cv2.drawFrameAxes(frame, profile.intrinsics.K, profile.intrinsics.dist, rvec, tvec, MARKER_MM / 2)
         dmm = float(np.linalg.norm(tvec))
         x, y = c[0][0]
         cv2.putText(frame, f"id{mid}  {dmm/10:.1f} cm", (int(x), int(y) - 10),
@@ -61,7 +63,7 @@ def annotate_cheker(frame):
 
     corners = cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
 
-    ok, rvec, tvec = cv2.solvePnP(objpc, corners, K, DIST)
+    ok, rvec, tvec = cv2.solvePnP(objpc, corners, profile.intrinsics.K, profile.intrinsics.dist)
     if not ok:
         return frame
 
@@ -73,7 +75,7 @@ def annotate_cheker(frame):
         [0,0,0], [w,0,0], [w,h,0], [0,h,0],           # base, on the board
         [0,0,-d], [w,0,-d], [w,h,-d], [0,h,-d],       # top
     ])
-    pts, _ = cv2.projectPoints(box, rvec, tvec, K, DIST)
+    pts, _ = cv2.projectPoints(box, rvec, tvec, profile.intrinsics.K, profile.intrinsics.dist)
     pts = pts.reshape(-1, 2).astype(np.int32)
 
     cv2.drawContours(frame, [pts[:4]], -1, (0, 255, 0), 2)        # base
@@ -84,7 +86,7 @@ def annotate_cheker(frame):
         cv2.line(frame, tuple(pts[i]), tuple(pts[i+4]), (255, 0, 0), 2)
     cv2.drawContours(frame, [pts[4:]], -1, (0, 0, 255), 2)
 
-    cv2.drawFrameAxes(frame, K, DIST, rvec, tvec, 50)
+    cv2.drawFrameAxes(frame, profile.intrinsics.K, profile.intrinsics.dist, rvec, tvec, 50)
 
     # r = camera_pose_from_cheker_board(frame)
     # if r:

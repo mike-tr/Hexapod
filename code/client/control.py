@@ -25,7 +25,7 @@ ROBOT = ("192.168.10.21", 9000)   # your Pi's IP
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 
-SAVENAME = "temp"
+SAVENAME = "tempground2"
 
 def deadzone(v, t=0.12):
     return 0.0 if abs(v) < t else (v - t * (1 if v > 0 else -1)) / (1 - t)
@@ -61,7 +61,7 @@ while running:
     print(msg)
     frame = reciever.frame
     if frame is not None:
-        rgb = cv2.cvtColor(annotate(reciever.frame), cv2.COLOR_BGR2RGB)
+        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         pygame.surfarray.blit_array(surf, rgb.swapaxes(0, 1))
         screen.blit(surf, (0, 0))
     # else:

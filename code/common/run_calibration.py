@@ -4,13 +4,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import cv2, glob, json
 import numpy as np
-from common.paths import IMAGES
+from common.paths import IMAGES, CONFIG
 
 PATTERN   = (6, 9)                   # inner corners
 SQUARE_MM = 25
 
 CALIB_IMAGES = IMAGES
-NAME = "test"
+NAME = "temp"
 
 print(CALIB_IMAGES)
 
@@ -21,7 +21,7 @@ criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 objpoints, imgpoints, used = [], [], []
 size = None
 
-for f in sorted(CALIB_IMAGES.glob("test_*.jpg")):
+for f in sorted(CALIB_IMAGES.glob(NAME / "_*.jpg")):
     img = cv2.imread(str(f))
     if img is None:
         print(f"{f.name}: unreadable")
@@ -59,7 +59,7 @@ for i, name in enumerate(used):
 print("\nK =\n", K)
 print("\ndist =", dist.ravel())
 
-np.savez(DATA / "camera_calib.npz",
+np.savez(CONFIG / "camera_calib.npz",
          K=K, dist=dist, rms=rms, size=size, square_mm=SQUARE_MM)
 
 json.dump({
@@ -70,6 +70,6 @@ json.dump({
     "rms_px": float(rms),
     "square_mm": SQUARE_MM,
     "n_images": len(used),
-}, open(DATA / "camera_calib.json", "w"), indent=2)
+}, open(CONFIG / "camera_calib.json", "w"), indent=2)
 
-print(f"\nsaved to {DATA}")
+print(f"\nsaved to {CONFIG}")

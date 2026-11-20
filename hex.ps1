@@ -4,7 +4,8 @@ $PI   = "miket@hexapi.local"
 $ROOT = "~/Hexapod"
 
 switch ($cmd) {
-    "sync"     { scp -r "${PI}:${ROOT}/calibration/images" ./calibration/ }
+    "sync"     { scp -r "${PI}:${ROOT}/data" ./ }
+    "syncps"     { scp -r ./data/ "${PI}:${ROOT}/data" }
     "push"     { scp ./calibration/camera_calib.npz "${PI}:${ROOT}/calibration/" }
     "shutdown" { ssh $PI "sudo shutdown now" }
     "reboot"   { ssh $PI "sudo reboot" }
