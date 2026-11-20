@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from common.path import CONFIG
+from common.paths import CONFIG
 
 import json
 
@@ -37,24 +37,6 @@ class Config:
         copy_values(data, data_dummy)
         self.jsave(data, self.PATH)
  
-
-
-        # self.legR : list[HexLeg] = [HexLeg("RT", self, ServoConfig(18, 90, (20, 160)), ServoConfig(17, 90, (20, 160)), ServoConfig(16, -15, (0, 115)), 
-        #                                    45, (MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), self.HOME_LOCAL),
-        #                             HexLeg("RM", self, ServoConfig(21, 90, (20, 160)), ServoConfig(20, 90, (20, 160)), ServoConfig(19, -15, (0, 115)), 
-        #                                                                        0, (MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), self.HOME_LOCAL),
-        #                             HexLeg("RB", self, ServoConfig(27, 90, (20, 160)), ServoConfig(23, 90, (20, 160)), ServoConfig(22, -15, (0, 115)), 
-        #                                                                        -45, (MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), self.HOME_LOCAL)]
-        # self.legL : list[HexLeg] = [
-        #                             HexLeg("LT", self, ServoConfig(13, 90, (20, 160)), ServoConfig(14, 90, (20, 160)), ServoConfig(15, 0, (0, 130)), 
-        #                                    135, (MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), self.HOME_LOCAL),
-        #                             HexLeg("LM", self, ServoConfig(10, 85, (20, 160)), ServoConfig(11, 90, (20, 160)), ServoConfig(12, -5, (0, 130)), 
-        #                                                                        180, (MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), self.HOME_LOCAL),
-        #                             HexLeg("LB", self, ServoConfig(31, 90, (20, 160)), ServoConfig(8, 90, (20, 160)), ServoConfig(9, -10, (0, 110)), 
-        #                                                                        -135, (MOUNT_POSX_45D, MOUNT_POSY_45D, MOUNT_Z_OFFSET), self.HOME_LOCAL)]
-
-# This file, will generate a dummy json file, that stores all hexapod data, in its relative format.
-
 
     def generate_empty(self):
         print("Generating a new dummy json file, with fake data")
