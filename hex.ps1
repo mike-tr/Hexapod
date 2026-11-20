@@ -12,5 +12,6 @@ switch ($cmd) {
     "temp"     { ssh $PI "vcgencmd measure_temp; vcgencmd get_throttled" }
     "server"   { ssh $PI "cd $ROOT && hexapod/bin/python code/server.py" }
     "ssh"      { ssh $PI }
+    "robocode"     { scp -r "${PI}:${ROOT}/code/robot" ./code }
     default    { Write-Host "usage: .\hex.ps1 {sync|push|shutdown|reboot|temp|server|ssh}" }
 }

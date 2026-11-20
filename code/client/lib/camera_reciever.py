@@ -14,7 +14,7 @@ class FrameReceiver:
         self.sock.bind((host, port))
         self.pending = {}
         self.max_pending = max_pending
-        self.lastframe = -1
+        self.lastframe_id = -1
         self.frame: NDArray[np.uint8] | None = None
         self._stop = threading.Event()
         self._thread = threading.Thread(target=self._run, daemon=True)
@@ -24,6 +24,7 @@ class FrameReceiver:
 
     def _run(self):
         while not self._stop.is_set():
+            print("recieving frames")
             self.frame = self.recv()
         print("camera down")
 
@@ -34,10 +35,11 @@ class FrameReceiver:
 
     def recv(self) -> NDArray[np.uint8] | None:
         """Block until a complete frame arrives, then return it."""
+
         while not self._stop.is_set():
             pkt, _ = self.sock.recvfrom(2048)
             fid, idx, total = HDR.unpack_from(pkt)
-            if fid <= self.lastframe:
+            if fid <= self.lastframe_id:
                 continue
 
             chunks = self.pending.setdefault(fid, {})
@@ -47,13 +49,15 @@ class FrameReceiver:
                 data = b"".join(chunks[i] for i in range(total))
                 #print(data)
                 for id in list(self.pending.keys()):
-                    if id <= self.lastframe:
+                    if id <= self.lastframe_id:
                         del self.pending[id]
                 #del self.pending[fid]
                 img = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
                 if img is not None:
+                    self.lastframe_id = fid
                     return img
 
             if len(self.pending) > self.max_pending:
                 oldest = min(self.pending)
                 del self.pending[oldest]
+        print("nothing")

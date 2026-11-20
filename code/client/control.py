@@ -58,8 +58,9 @@ while running:
         "stop" : stop
     }
     sock.sendto(json.dumps(msg).encode(), ROBOT)
-    print(msg)
+    #print(msg)
     frame = reciever.frame
+    #print(frame)
     if frame is not None:
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         pygame.surfarray.blit_array(surf, rgb.swapaxes(0, 1))
