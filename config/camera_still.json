@@ -14,7 +14,6 @@
     "dist": [0.0, 0.0, 0.0, 0.0, 0.0],
     "rms_px": null,
     "n_images": 0,
-    "square_mm": 23.5,
     "calibrated_utc": null
   }
 }

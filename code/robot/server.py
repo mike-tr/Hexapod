@@ -7,7 +7,7 @@ from robot.lib.hexapod import Hexapod
 from robot.lib.brain import HexapodBrain
 from robot.lib.camera import CameraCapture
 from robot.lib.frameSender import FrameSender
-from common.camera_calibration import load_profile, CameraProfile
+from common.camera_config import load_profile, CameraProfile
 
 
 from common.vector import Vec3

@@ -1,5 +1,5 @@
 import cv2, numpy as np
-from common.camera_calibration import K, DIST
+from common.camera_calibration import CameraProfile
 
 # d = np.load(CALIB / "camera_calib.npz")
 # K, DIST = d["K"], d["DIST"]
@@ -13,7 +13,7 @@ objp[:, :2] = np.mgrid[0:PATTERN[0], 0:PATTERN[1]].T.reshape(-1, 2) * SQUARE_MM
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
 
-def camera_pose_from_cheker_board(frame):
+def camera_pose_from_cheker_board(profile : CameraProfile, frame):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     ok, corners = cv2.findChessboardCorners(
         gray, PATTERN,
@@ -23,7 +23,7 @@ def camera_pose_from_cheker_board(frame):
 
     corners = cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
 
-    ok, rvec, tvec = cv2.solvePnP(objp, corners, K, DIST)
+    ok, rvec, tvec = cv2.solvePnP(objp, corners, profile.intrinsics.K, profile.intrinsics.dist)
     if not ok:
         return None
 

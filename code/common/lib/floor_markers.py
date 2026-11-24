@@ -1,5 +1,5 @@
 import cv2, numpy as np
-from common.camera_calibration import K, DIST
+from common.camera_config import CameraProfile
 
 # d = np.load(CALIB / "camera_calib.npz")
 # K, DIST = d["K"], d["DIST"]
@@ -16,14 +16,14 @@ detector = cv2.aruco.ArucoDetector(adict, cv2.aruco.DetectorParameters())
 
 
 
-def camera_pose_from_marker(frame):
+def camera_pose_from_marker(profile : CameraProfile, frame):
     corners, ids, _ = detector.detectMarkers(frame)
     if ids is None:
         return None
 
     out = []
     for c, mid in zip(corners, ids.ravel()):
-        ok, rvec, tvec = cv2.solvePnP(objp, c[0], K, DIST,
+        ok, rvec, tvec = cv2.solvePnP(objp, c[0], profile.intrinsics.K, profile.intrinsics.dist,
                                       flags=cv2.SOLVEPNP_IPPE_SQUARE)
         if not ok:
             continue

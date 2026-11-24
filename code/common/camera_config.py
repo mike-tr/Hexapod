@@ -34,7 +34,6 @@ class Intrinsics:
     dist: np.ndarray
     rms_px: float | None
     n_images: int
-    square_mm: float | None
     calibrated_utc: str | None
 
     @property
@@ -60,14 +59,13 @@ class CameraProfile:
     capture: Capture
     intrinsics: Intrinsics
 
-    def with_intrinsics(self, K, dist, *, rms_px, n_images, square_mm=None) -> "CameraProfile":
+    def with_intrinsics(self, K, dist, *, rms_px, n_images) -> "CameraProfile":
         """New profile, same capture block, fresh intrinsics. Stamps the time itself."""
         return replace(self, intrinsics=Intrinsics(
             K=np.asarray(K, float),
             dist=np.asarray(dist, float).ravel(),
             rms_px=float(rms_px),
             n_images=int(n_images),
-            square_mm=square_mm if square_mm is not None else self.intrinsics.square_mm,
             calibrated_utc=datetime.now(timezone.utc).isoformat(timespec="seconds"),
         ))
 
@@ -80,6 +78,11 @@ class Extrinsics:
     forward_mm: float
     right_mm: float
 
+def save_extrinsics(profile : Extrinsics):
+    p = CONFIG / f"camera_extrinsics.json"
+    p.write_text(json.dumps({"height_mm": profile.height_mm, "tilt_deg": profile.tilt_deg, 
+                             "forward_mm": profile.forward_mm, "right_mm": profile.right_mm}, indent=2) + "\n")
+    return p
 
 # ----------------------------------------------------------------- load / save
 
@@ -97,8 +100,7 @@ def load_profile(name: str, path: Path | None = None) -> CameraProfile:
     i = j["intrinsics"]
     intr = Intrinsics(K=np.asarray(i["K"], dtype=float),
                       dist=np.asarray(i["dist"], dtype=float).ravel(),
-                      rms_px=i.get("rms_px"), n_images=int(i.get("n_images", 0)),
-                      square_mm=i.get("square_mm"), calibrated_utc=i.get("calibrated_utc"))
+                      rms_px=i.get("rms_px"), n_images=int(i.get("n_images", 0)), calibrated_utc=i.get("calibrated_utc"))
 
     _validate(name, cap, intr, p)
     return CameraProfile(name=name, capture=cap, intrinsics=intr)
@@ -111,14 +113,12 @@ def save_profile(prof: CameraProfile, path: Path | None = None) -> Path:
     c, i = prof.capture, prof.intrinsics
     p.write_text(json.dumps({
         "profile": prof.name,
-        "capture": {"size": list(c.size), "raw_size": list(c.raw_size),
-                    "format": c.format, "hflip": c.hflip, "vflip": c.vflip},
+        "capture": {"size": list(c.size), "raw_size": list(c.raw_size), "lores": list(c.lores),
+                    "format": c.format, "format_lores": c.format, "hflip": c.hflip, "vflip": c.vflip},
         "intrinsics": {"K": i.K.tolist(), "dist": i.dist.tolist(),
-                       "rms_px": i.rms_px, "n_images": i.n_images,
-                       "square_mm": i.square_mm, "calibrated_utc": i.calibrated_utc},
+                       "rms_px": i.rms_px, "n_images": i.n_images, "calibrated_utc": i.calibrated_utc},
     }, indent=2) + "\n")
     return p
-
 
 def load_extrinsics(path: Path | None = None) -> Extrinsics:
     j = json.loads(Path(path or CONFIG / "camera_extrinsics.json").read_text())
